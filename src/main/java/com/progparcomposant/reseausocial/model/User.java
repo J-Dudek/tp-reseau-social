@@ -24,6 +24,7 @@ public class User extends BaseEntity {
     private String phoneNumber;
     private String city;
     private Date signInDate;
+    private String password;
 
     @OneToMany(mappedBy = "user")
     private Set<Post> posts;
