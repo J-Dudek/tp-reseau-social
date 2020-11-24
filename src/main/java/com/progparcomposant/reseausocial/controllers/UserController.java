@@ -11,10 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @RestController
@@ -43,17 +42,15 @@ public class UserController {
 
     @GetMapping(path = "/{userId}/friends")
     public List<Optional<User>> findUserFriends(@PathVariable("userId") Long userId) {
-        Iterable<Friendship> friendships = this.friendshipRepository.findFriendshipsByFirstUserIdOrSecondUserId(userId,userId);
-        List<Optional<User>> friends = new ArrayList<>();
-        for (Friendship friendship : friendships) {
-            if (friendship.getFirstUserId().equals(userId)) {
-                friends.add(this.userRepository.findById(friendship.getSecondUserId()));
-            }else if(friendship.getSecondUserId().equals(userId)){
-                friends.add(this.userRepository.findById(friendship.getFirstUserId()));
-            }
-
+        //si l'id n'est pas passé par la session, aprés si on ne le passe pas par la session tt le monde peut voir les amis de tt le monde//
+        if(!userRepository.existsById(userId)){
+            throw new NoSuchElementException("Id ixesistant");
         }
-        return friends;
+        Iterable<Friendship> friendships = this.friendshipRepository.findFriendshipsByFirstUserIdOrSecondUserId(userId,userId);
+        return StreamSupport.stream(friendships.spliterator(), false)
+                .flatMap(e -> Stream.of(userRepository.findById(e.getFirstUserId()), userRepository.findById(e.getSecondUserId())))
+                .filter(user->!user.get().getId().equals(userId))
+                .collect(Collectors.toList());
     }
 
     @GetMapping(path = "/{userId}/invitations")
