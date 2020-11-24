@@ -5,14 +5,12 @@ import lombok.*;
 import javax.persistence.Id;
 import java.io.Serializable;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 public class InvitationId implements Serializable {
     @Id
-    private String firstUserId;
+    private Long firstUserId;
     @Id
-    private String secondUserId;
+    private Long secondUserId;
 }

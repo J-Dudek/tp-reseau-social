@@ -11,8 +11,6 @@ import javax.persistence.IdClass;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -20,8 +18,32 @@ import java.sql.Timestamp;
 public class Invitation {
 
     @Id
-    private String firstUserId;
+    private Long firstUserId;
     @Id
-    private String secondUserId;
+    private Long secondUserId;
     private Timestamp invitationDate;
+
+    public Long getFirstUserId() {
+        return firstUserId;
+    }
+
+    public void setFirstUserId(Long firstUserId) {
+        this.firstUserId = firstUserId;
+    }
+
+    public Long getSecondUserId() {
+        return secondUserId;
+    }
+
+    public void setSecondUserId(Long secondUserId) {
+        this.secondUserId = secondUserId;
+    }
+
+    public Timestamp getInvitationDate() {
+        return invitationDate;
+    }
+
+    public void setInvitationDate(Timestamp invitationDate) {
+        this.invitationDate = invitationDate;
+    }
 }
