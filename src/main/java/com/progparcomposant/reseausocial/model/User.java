@@ -7,7 +7,8 @@ import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Set;
 
 @Getter
@@ -23,7 +24,7 @@ public class User extends BaseEntity {
     private String email;
     private String phoneNumber;
     private String city;
-    private Date signInDate;
+    private Timestamp signInDate;
     private String password;
 
     @OneToMany(mappedBy = "user")

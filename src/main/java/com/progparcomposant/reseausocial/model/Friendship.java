@@ -8,10 +8,9 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Timestamp;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -19,10 +18,33 @@ import java.util.Date;
 public class Friendship {
 
     @Id
-    private String firstUserId;
+    private Long firstUserId;
     @Id
-    private String secondUserId;
-    private boolean hasFirstUserAccepted;
-    private boolean hasSecondUserAccepted;
-    private Date friendshipDate;
+    private Long secondUserId;
+
+    private Timestamp friendshipDate;
+
+    public Long getFirstUserId() {
+        return firstUserId;
+    }
+
+    public void setFirstUserId(Long firstUserId) {
+        this.firstUserId = firstUserId;
+    }
+
+    public Long getSecondUserId() {
+        return secondUserId;
+    }
+
+    public void setSecondUserId(Long secondUserId) {
+        this.secondUserId = secondUserId;
+    }
+
+    public Timestamp getFriendshipDate() {
+        return friendshipDate;
+    }
+
+    public void setFriendshipDate(Timestamp friendshipDate) {
+        this.friendshipDate = friendshipDate;
+    }
 }
