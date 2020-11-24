@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping(path = "/users")
@@ -41,25 +43,22 @@ public class UserController {
 
     @GetMapping(path = "/{userId}/friends")
     public List<Optional<User>> findUserFriends(@PathVariable("userId") Long userId) {
-        Iterable<Friendship> friendships = this.friendshipRepository.findFriendshipsByFirstUserId(userId);
+        Iterable<Friendship> friendships = this.friendshipRepository.findFriendshipsByFirstUserIdOrSecondUserId(userId,userId);
         List<Optional<User>> friends = new ArrayList<>();
         for (Friendship friendship : friendships) {
             if (friendship.getFirstUserId().equals(userId)) {
                 friends.add(this.userRepository.findById(friendship.getSecondUserId()));
+            }else if(friendship.getSecondUserId().equals(userId)){
+                friends.add(this.userRepository.findById(friendship.getFirstUserId()));
             }
+
         }
         return friends;
     }
 
     @GetMapping(path = "/{userId}/invitations")
-    public List<Optional<User>> findUserInvitations(@PathVariable("userId") Long userId) {
+    public List<Invitation> findUserInvitations(@PathVariable("userId") Long userId) {
         Iterable<Invitation> invitations = this.invitationRepository.findAllByFirstUserId(userId);
-        List<Optional<User>> usersRequestingFriendship = new ArrayList<>();
-        for (Invitation invitation : invitations) {
-            if (invitation.getFirstUserId().equals(userId)) {
-                usersRequestingFriendship.add(this.userRepository.findById(invitation.getSecondUserId()));
-            }
-        }
-        return usersRequestingFriendship;
+        return StreamSupport.stream(invitations.spliterator(), false).collect(Collectors.toList());
     }
 }

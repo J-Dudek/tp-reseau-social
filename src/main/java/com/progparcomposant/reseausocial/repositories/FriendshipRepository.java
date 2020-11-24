@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface FriendshipRepository extends CrudRepository<Friendship, Long> {
 
-    Iterable<Friendship> findFriendshipsByFirstUserId(Long userId);
+    Iterable<Friendship> findFriendshipsByFirstUserIdOrSecondUserId(Long firstUserId, Long secondUserId);
 }
