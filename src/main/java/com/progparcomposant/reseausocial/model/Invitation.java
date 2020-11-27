@@ -14,15 +14,14 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@IdClass(FriendshipId.class)
-public class Friendship {
+@IdClass(InvitationId.class)
+public class Invitation {
 
     @Id
     private Long firstUserId;
     @Id
     private Long secondUserId;
-
-    private Timestamp friendshipDate;
+    private Timestamp invitationDate;
 
     public Long getFirstUserId() {
         return firstUserId;
@@ -40,20 +39,11 @@ public class Friendship {
         this.secondUserId = secondUserId;
     }
 
-    public Timestamp getFriendshipDate() {
-        return friendshipDate;
+    public Timestamp getInvitationDate() {
+        return invitationDate;
     }
 
-    public void setFriendshipDate(Timestamp friendshipDate) {
-        this.friendshipDate = friendshipDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Friendship{" +
-                "firstUserId=" + firstUserId +
-                ", secondUserId=" + secondUserId +
-                ", friendshipDate=" + friendshipDate +
-                '}';
+    public void setInvitationDate(Timestamp invitationDate) {
+        this.invitationDate = invitationDate;
     }
 }
