@@ -61,15 +61,4 @@ public class UserController {
         Iterable<Invitation> invitations = this.invitationRepository.findAllByFirstUserId(userId);
         return StreamSupport.stream(invitations.spliterator(), false).collect(Collectors.toList());
     }
-
-    @PostMapping("/create")
-    public void createUser(@RequestBody UserDTO userDTO) throws Exception {
-        if(userRepository.findUserByEmail(userDTO.getEmail()).isPresent()){
-            throw new Exception("Email already assigned to an account");
-        }else{
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-            this.userRepository.save(this.userConverter.dtoToEntity(userDTO));
-        }
-    }
 }
