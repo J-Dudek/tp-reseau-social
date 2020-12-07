@@ -1,15 +1,16 @@
 package com.progparcomposant.reseausocial.controllers;
 
+
+import com.progparcomposant.reseausocial.converters.UserConverter;
+import com.progparcomposant.reseausocial.dto.UserDTO;
+import com.progparcomposant.reseausocial.repositories.UserRepository;
 import com.progparcomposant.reseausocial.model.Friendship;
 import com.progparcomposant.reseausocial.model.Invitation;
 import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.FriendshipRepository;
 import com.progparcomposant.reseausocial.repositories.InvitationRepository;
-import com.progparcomposant.reseausocial.repositories.UserRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,11 +24,13 @@ public class UserController {
     private final UserRepository userRepository;
     private final FriendshipRepository friendshipRepository;
     private final InvitationRepository invitationRepository;
+    private final UserConverter userConverter;
 
-    public UserController(UserRepository userRepository, FriendshipRepository friendshipRepository, InvitationRepository invitationRepository) {
+    public UserController(UserConverter userConverter,UserRepository userRepository, FriendshipRepository friendshipRepository, InvitationRepository invitationRepository) {
         this.userRepository = userRepository;
         this.friendshipRepository = friendshipRepository;
         this.invitationRepository = invitationRepository;
+        this.userConverter = userConverter;
     }
 
     @GetMapping
@@ -57,5 +60,16 @@ public class UserController {
     public List<Invitation> findUserInvitations(@PathVariable("userId") Long userId) {
         Iterable<Invitation> invitations = this.invitationRepository.findAllByFirstUserId(userId);
         return StreamSupport.stream(invitations.spliterator(), false).collect(Collectors.toList());
+    }
+
+    @PostMapping("/create")
+    public void createUser(@RequestBody UserDTO userDTO) throws Exception {
+        if(userRepository.findUserByEmail(userDTO.getEmail()).isPresent()){
+            throw new Exception("Email already assigned to an account");
+        }else{
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            this.userRepository.save(this.userConverter.dtoToEntity(userDTO));
+        }
     }
 }
