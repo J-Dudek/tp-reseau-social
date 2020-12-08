@@ -29,6 +29,16 @@ public class UserDTO {
         this.signInDate = signInDate;
         this.password = password;
     }
+    public UserDTO(String firstName, String lastName, Date birthdate, String email, String phoneNumber, String city, Timestamp signInDate, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthdate = birthdate;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.city = city;
+        this.signInDate = signInDate;
+        this.password = password;
+    }
 
     public Long getIdUser() {
         return idUser;

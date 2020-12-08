@@ -9,7 +9,7 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.util.Date;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -19,7 +19,7 @@ import java.util.Date;
 public class Post extends BaseEntity {
 
     private String message;
-    private Date publicationDate;
+    private Timestamp publicationDate;
     private boolean isPublic;
 
     @ManyToOne
