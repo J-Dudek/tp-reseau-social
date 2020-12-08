@@ -1,22 +1,31 @@
 package com.progparcomposant.reseausocial.dto;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class PostDTO {
 
     private Long idPost;
     private String message;
-    private Date publicationDate;
+    private Timestamp publicationDate;
     private boolean isPublic;
+    private Long userId;
 
     public PostDTO() {
     }
 
-    public PostDTO(Long idPost, String message, Date publicationDate, boolean isPublic) {
+    public PostDTO(Long idPost, String message, Timestamp publicationDate, boolean isPublic, Long userId) {
         this.idPost = idPost;
         this.message = message;
         this.publicationDate = publicationDate;
         this.isPublic = isPublic;
+        this.userId = userId;
+    }
+    public PostDTO(String message, Timestamp publicationDate, boolean isPublic, Long userId) {
+        this.message = message;
+        this.publicationDate = publicationDate;
+        this.isPublic = isPublic;
+        this.userId = userId;
     }
 
     public Long getIdPost() {
@@ -39,7 +48,7 @@ public class PostDTO {
         return publicationDate;
     }
 
-    public void setPublicationDate(Date publicationDate) {
+    public void setPublicationDate(Timestamp publicationDate) {
         this.publicationDate = publicationDate;
     }
 
@@ -49,5 +58,13 @@ public class PostDTO {
 
     public void setPublic(boolean aPublic) {
         isPublic = aPublic;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
