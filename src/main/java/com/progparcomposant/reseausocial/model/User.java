@@ -1,5 +1,6 @@
 package com.progparcomposant.reseausocial.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,5 +29,6 @@ public class User extends BaseEntity {
     private String password;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private Set<Post> posts;
 }
