@@ -1,14 +1,12 @@
 package com.progparcomposant.reseausocial.controllers;
 
 import com.progparcomposant.reseausocial.converters.PostConverter;
+import com.progparcomposant.reseausocial.dto.PostDTO;
 import com.progparcomposant.reseausocial.model.Post;
 import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.PostRepository;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -29,19 +27,33 @@ public class PostController {
     }
 
     @GetMapping
-    public Iterable<Post> findPosts(){ return this.postRepository.findAll(); }
+    public Iterable<PostDTO> findPosts(){ return this.postConverter.entityToDto((List<Post>) this.postRepository.findAll()); }
 
     @GetMapping(path="/{postId}")
-    public Optional<Post> findPost(@PathVariable("postId") Long postId){ return this.postRepository.findById(postId);}
+    public PostDTO findPost(@PathVariable("postId") Long postId) throws NoSuchElementException{
+
+        Optional<Post> post = this.postRepository.findById(postId);
+        if(post.isPresent()){
+            return this.postConverter.entityToDto(post.get());
+        }else{
+            throw new NoSuchElementException("UserId inexistant");
+        }
+    }
 
     @GetMapping(path = "/user/{userId}")
-    public Iterable<Post> findPostsByUser(@PathVariable("userId") Long userId){
+    public Iterable<PostDTO> findPostsByUser(@PathVariable("userId") Long userId){
 /*        if(!userRepository.existsById(userId)){
             throw new NoSuchElementException("UserId inexistant")
         }*/
-        return this.postRepository.findAllByUserId(userId);
+        return this.postConverter.entityToDto((List<Post>) this.postRepository.findAllByUserId(userId));
     }
 
     @GetMapping(path="/list/{listIds}")
-    public Iterable<Post> findListPostsByIds(@PathVariable("listIds") List<Long> listIds){ return this.postRepository.findAllByIdIn(listIds);}
+    public Iterable<PostDTO> findListPostsByIds(@PathVariable("listIds") List<Long> listIds){
+        return this.postConverter.entityToDto((List<Post>) this.postRepository.findAllByIdIn(listIds));}
+
+    @PostMapping(path="/")
+    public PostDTO createPost( @RequestBody PostDTO newPostDto){
+        return  postConverter.entityToDto(postRepository.save(this.postConverter.dtoToEntity(newPostDto)));
+    }
 }
