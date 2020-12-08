@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -41,5 +42,6 @@ public class PostController {
         return this.postRepository.findAllByUserId(userId);
     }
 
-    
+    @GetMapping(path="/list/{listIds}")
+    public Iterable<Post> findListPostsByIds(@PathVariable("listIds") List<Long> listIds){ return this.postRepository.findAllByIdIn(listIds);}
 }
