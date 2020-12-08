@@ -1,6 +1,8 @@
 package com.progparcomposant.reseausocial.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import java.io.Serializable;

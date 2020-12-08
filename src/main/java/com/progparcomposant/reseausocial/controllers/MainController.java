@@ -2,17 +2,12 @@ package com.progparcomposant.reseausocial.controllers;
 
 import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.UserDTO;
-import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
 import javassist.NotFoundException;
-import org.hibernate.Session;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.http.HttpRequest;
-import java.sql.PreparedStatement;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/")

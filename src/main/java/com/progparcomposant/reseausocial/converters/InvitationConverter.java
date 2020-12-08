@@ -1,9 +1,7 @@
 package com.progparcomposant.reseausocial.converters;
 
 import com.progparcomposant.reseausocial.dto.InvitationDTO;
-import com.progparcomposant.reseausocial.dto.UserDTO;
 import com.progparcomposant.reseausocial.model.Invitation;
-import com.progparcomposant.reseausocial.model.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
