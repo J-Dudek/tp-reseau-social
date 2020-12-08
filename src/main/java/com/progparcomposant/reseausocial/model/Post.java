@@ -24,6 +24,5 @@ public class Post extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIgnore
     private User user;
 }
