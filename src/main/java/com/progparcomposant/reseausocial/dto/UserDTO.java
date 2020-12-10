@@ -13,12 +13,13 @@ public class UserDTO {
     private String phoneNumber;
     private String city;
     private Timestamp signInDate;
+    private String username;
     private String password;
 
     public UserDTO() {
     }
 
-    public UserDTO(Long idUser, String firstName, String lastName, Date birthdate, String email, String phoneNumber, String city, Timestamp signInDate, String password) {
+    public UserDTO(Long idUser, String firstName, String lastName, Date birthdate, String email, String phoneNumber, String city, Timestamp signInDate,String username, String password) {
         this.idUser = idUser;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -27,9 +28,10 @@ public class UserDTO {
         this.phoneNumber = phoneNumber;
         this.city = city;
         this.signInDate = signInDate;
+        this.username = username;
         this.password = password;
     }
-    public UserDTO(String firstName, String lastName, Date birthdate, String email, String phoneNumber, String city, Timestamp signInDate, String password) {
+    public UserDTO(String firstName, String lastName, Date birthdate, String email, String phoneNumber, String city, Timestamp signInDate, String username,String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthdate = birthdate;
@@ -37,6 +39,7 @@ public class UserDTO {
         this.phoneNumber = phoneNumber;
         this.city = city;
         this.signInDate = signInDate;
+        this.username= username;
         this.password = password;
     }
 
@@ -107,6 +110,10 @@ public class UserDTO {
     public String getPassword() {
         return password;
     }
+
+    public String getUsername() { return username; }
+
+    public void setUsername(String username) { this.username = username;}
 
     public void setPassword(String password) {
         this.password = password;

@@ -26,7 +26,9 @@ public class User extends BaseEntity {
     private String phoneNumber;
     private String city;
     private Timestamp signInDate;
+    private String username;
     private String password;
+
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore

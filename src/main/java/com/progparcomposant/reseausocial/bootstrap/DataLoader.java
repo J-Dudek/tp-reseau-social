@@ -42,11 +42,12 @@ public class DataLoader implements CommandLineRunner {
         String[] city = {"Paris", "Londres", "Trifouilly-les-Oies", "New-York", "Taiwan"};
         String[] birthdate = {"1982-02-03", "2000-06-22", "1998-10-07", "1975-11-11", "1987-12-08"};
         Timestamp[] signIn = {Timestamp.valueOf("2000-03-20 12:12:12"), Timestamp.valueOf("2010-07-20 08:15:12"), Timestamp.valueOf("2002-12-30 10:05:00"), Timestamp.valueOf("2014-09-10 13:02:12"), Timestamp.valueOf("2009-07-13 05:00:12")};
+        String[] username = {"marcR","jeanM","paulV","sophieC","heleneA"};
         String[] pass = {"1234", "univers", "L@pin", "m0t2p@Ss€", "UneSaisieDeMot"};
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         List<UserDTO> userDTOList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            UserDTO userDTO = new UserDTO(firstName[i], lastName[i], Date.valueOf(birthdate[i]), email[i], phoneNumber[i], city[i], signIn[i], passwordEncoder.encode(pass[i]));
+            UserDTO userDTO = new UserDTO(firstName[i], lastName[i], Date.valueOf(birthdate[i]), email[i], phoneNumber[i], city[i], signIn[i],username[i], passwordEncoder.encode(pass[i]));
             userDTOList.add(userDTO);
         }
         userRepository.saveAll(userConverter.dtoToEntity(userDTOList));
