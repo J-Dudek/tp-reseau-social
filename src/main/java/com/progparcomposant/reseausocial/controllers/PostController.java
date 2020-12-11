@@ -93,7 +93,7 @@ public class PostController {
     public PostDTO updatePost( @PathVariable("postId") Long postId, @RequestBody PostDTO newPostDto){
         Optional<Post> post = this.postRepository.findById(postId);
         if(!post.isPresent()){
-            throw new NoSuchElementException("UserId inexistant");
+            throw new NoSuchElementException("PostId inexistant");
         }else if( post.get().getId() != newPostDto.getIdPost()){
             throw new IllegalArgumentException();
         }

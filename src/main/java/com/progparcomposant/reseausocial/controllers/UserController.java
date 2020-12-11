@@ -2,16 +2,14 @@ package com.progparcomposant.reseausocial.controllers;
 
 
 import com.progparcomposant.reseausocial.converters.UserConverter;
+import com.progparcomposant.reseausocial.dto.UserDTO;
 import com.progparcomposant.reseausocial.model.Friendship;
 import com.progparcomposant.reseausocial.model.Invitation;
 import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.FriendshipRepository;
 import com.progparcomposant.reseausocial.repositories.InvitationRepository;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -19,6 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
 
 @RestController
 @RequestMapping(path = "/users")
@@ -64,4 +63,24 @@ public class UserController {
         Iterable<Invitation> invitations = this.invitationRepository.findAllByFirstUserId(userId);
         return StreamSupport.stream(invitations.spliterator(), false).collect(Collectors.toList());
     }
+
+    @PostMapping(path = "/")
+    public UserDTO createUser( @RequestBody UserDTO newUserDto ){
+        return userConverter.entityToDto(userRepository.save(this.userConverter.dtoToEntity(newUserDto)));
+    }
+
+    @PutMapping(path="/{userId}")
+    public UserDTO updateUser( @PathVariable("userId") Long userId, @RequestBody UserDTO newUserDto){
+        Optional<User> user = this.userRepository.findById(userId);
+        if(!user.isPresent()){
+            throw new NoSuchElementException("PostId inexistant");
+        }else if( userId != newUserDto.getIdUser()){
+            throw new IllegalArgumentException(String.valueOf(newUserDto.getIdUser()));
+        }else{
+            return userConverter.entityToDto(userRepository.save(this.userConverter.dtoToEntity(newUserDto)));
+        }
+    }
+
+    @DeleteMapping(path = "/{userId}")
+    public void deleteUserById(@PathVariable("userId") Long userId){ this.userRepository.deleteById(userId);}
 }
