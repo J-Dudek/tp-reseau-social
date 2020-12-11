@@ -13,7 +13,7 @@ import com.progparcomposant.reseausocial.repositories.InvitationRepository;
 import com.progparcomposant.reseausocial.repositories.PostRepository;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
@@ -23,7 +23,6 @@ import java.util.List;
 
 @Component
 public class DataLoader implements CommandLineRunner {
-
 
     @Override
     public void run(String... args) throws Exception {
@@ -44,7 +43,6 @@ public class DataLoader implements CommandLineRunner {
         Timestamp[] signIn = {Timestamp.valueOf("2000-03-20 12:12:12"), Timestamp.valueOf("2010-07-20 08:15:12"), Timestamp.valueOf("2002-12-30 10:05:00"), Timestamp.valueOf("2014-09-10 13:02:12"), Timestamp.valueOf("2009-07-13 05:00:12")};
         String[] username = {"marcR","jeanM","paulV","sophieC","heleneA"};
         String[] pass = {"1234", "univers", "L@pin", "m0t2p@Ss€", "UneSaisieDeMot"};
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         List<UserDTO> userDTOList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             UserDTO userDTO = new UserDTO(firstName[i], lastName[i], Date.valueOf(birthdate[i]), email[i], phoneNumber[i], city[i], signIn[i],username[i], passwordEncoder.encode(pass[i]));
@@ -87,8 +85,9 @@ public class DataLoader implements CommandLineRunner {
         postRepository.saveAll(postConverter.dtoToEntity(postDTOList));
     }
 
-    public DataLoader(FriendshipRepository friendshipRepository, FriendshipConverter friendshipConverter, InvitationConverter invitationConverter, InvitationRepository invitationRepository,
+    public DataLoader(PasswordEncoder passwordEncoder, FriendshipRepository friendshipRepository, FriendshipConverter friendshipConverter, InvitationConverter invitationConverter, InvitationRepository invitationRepository,
                       PostConverter postConverter, PostRepository postRepository, UserRepository userRepository, UserConverter userConverter) {
+        this.passwordEncoder = passwordEncoder;
         this.friendshipRepository = friendshipRepository;
         this.friendshipConverter = friendshipConverter;
         this.invitationConverter = invitationConverter;
@@ -107,5 +106,6 @@ public class DataLoader implements CommandLineRunner {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final UserConverter userConverter;
+    private final PasswordEncoder passwordEncoder;
 
 }

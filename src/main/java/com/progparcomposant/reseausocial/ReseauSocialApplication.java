@@ -2,6 +2,9 @@ package com.progparcomposant.reseausocial;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 public class ReseauSocialApplication {
@@ -10,4 +13,8 @@ public class ReseauSocialApplication {
         SpringApplication.run(ReseauSocialApplication.class, args);
     }
 
+    @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

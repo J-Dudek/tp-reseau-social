@@ -3,7 +3,6 @@ package com.progparcomposant.reseausocial.controllers;
 import com.progparcomposant.reseausocial.converters.PostConverter;
 import com.progparcomposant.reseausocial.dto.PostDTO;
 import com.progparcomposant.reseausocial.model.Post;
-import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.PostRepository;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
 import org.springframework.web.bind.annotation.*;
