@@ -80,4 +80,7 @@ public class UserController {
             return userConverter.entityToDto(userRepository.save(this.userConverter.dtoToEntity(newUserDto)));
         }
     }
+
+    @DeleteMapping(path = "/{userId}")
+    public void deleteUserById(@PathVariable("userId") Long userId){ this.userRepository.deleteById(userId);}
 }
