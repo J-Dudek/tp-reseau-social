@@ -3,8 +3,6 @@ package com.progparcomposant.reseausocial.controllers;
 
 import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.UserDTO;
-import com.progparcomposant.reseausocial.model.Friendship;
-import com.progparcomposant.reseausocial.model.Invitation;
 import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
 import org.apache.commons.collections4.IterableUtils;
