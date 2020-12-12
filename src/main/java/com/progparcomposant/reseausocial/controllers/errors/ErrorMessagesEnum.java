@@ -6,6 +6,8 @@ public enum ErrorMessagesEnum {
     USER_NOT_FOUND("aucun user trouvé"),
     USER_NO_USERS_IN_DATABASE("aucun users dans la base de données"),
     USER_NO_USER_WITH_THAT_NAME("aucun user avec ce nom"),
+    USER_NO_USER_WITH_THAT_EMAIL("Aucun user avec cet email"),
+    USER_NO_USER_WITH_THAT_PHONENUMBER("Aucun user avec cenuméro de téléphone"),
 
     // Post entity error messages
     POST_NOT_FOUND("aucun post trouvé"),

@@ -62,7 +62,7 @@ public class UserController {
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
         } else {
-            throw new NoSuchElementException("Aucun user avec cet email");
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NO_USER_WITH_THAT_EMAIL.getErrorMessage());
         }
     }
 
@@ -72,7 +72,7 @@ public class UserController {
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
         } else {
-            throw new NoSuchElementException("Aucun user avec cenuméro de téléphone");
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NO_USER_WITH_THAT_PHONENUMBER.getErrorMessage());
         }
     }
 
