@@ -2,15 +2,18 @@ package com.progparcomposant.reseausocial.controllers;
 
 import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.UserDTO;
+import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
 import javassist.NotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "/")
+@RequestMapping(path = "/account")
 public class MainController {
 
     private final UserConverter userConverter;
@@ -33,20 +36,15 @@ public class MainController {
         }
     }
 
-    @PostMapping("/{email:.+}/{password}")
-    public void login(@PathVariable String email, @PathVariable String password, HttpServletRequest request) throws Exception {
-
-        userRepository.findUserByEmail(email).ifPresent(userConverter::entityToDto);
-        if(userRepository.findUserByEmail(email).isPresent()){
-            UserDTO userDTO = userConverter.entityToDto(userRepository.findUserByEmail(email).get());
-            if(passwordEncoder.matches(password,userDTO.getPassword())){
-                request.getSession().setAttribute("userId", userDTO.getIdUser());
-            }else{
-                throw new NotFoundException("Utilisateur non trouvé");
+    @PostMapping("/login")
+    public UserDTO login(@RequestBody UserDTO userDTO) throws Exception {
+        Optional<User> user= userRepository.findUserByUsername(userDTO.getUsername());
+        if(user.isPresent()){
+            if(passwordEncoder.matches(userDTO.getPassword(),user.get().getPassword())){
+                return userConverter.entityToDto(user.get());
             }
-        }else{
-            throw new Exception("Erreur d'identification");
         }
+        throw new NoSuchElementException("Erreur d'identification");
     }
 
 }
