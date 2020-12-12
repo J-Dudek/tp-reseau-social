@@ -2,23 +2,30 @@ package com.progparcomposant.reseausocial.controllers;
 
 import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.UserDTO;
+import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
-import javassist.NotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "/")
+@RequestMapping(path = "/account")
 public class MainController {
 
     private final UserConverter userConverter;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public MainController(UserConverter userConverter, UserRepository userRepository) {
+    public MainController(UserConverter userConverter, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userConverter = userConverter;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/register")
@@ -26,27 +33,21 @@ public class MainController {
         if(userRepository.findUserByEmail(userDTO.getEmail()).isPresent()){
             throw new Exception("Email already assigned to an account");
         }else{
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            userDTO.setSignInDate(new Timestamp(System.currentTimeMillis()));
             this.userRepository.save(this.userConverter.dtoToEntity(userDTO));
         }
     }
 
-    @PostMapping("/{email:.+}/{password}")
-    public void login(@PathVariable String email, @PathVariable String password, HttpServletRequest request) throws Exception {
-
-        userRepository.findUserByEmail(email).ifPresent(userConverter::entityToDto);
-        if(userRepository.findUserByEmail(email).isPresent()){
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            UserDTO userDTO = userConverter.entityToDto(userRepository.findUserByEmail(email).get());
-            if(passwordEncoder.matches(password,userDTO.getPassword())){
-                request.getSession().setAttribute("userId", userDTO.getIdUser());
-            }else{
-                throw new NotFoundException("Utilisateur non trouvé");
+    @PostMapping("/login")
+    public UserDTO login(@RequestBody UserDTO userDTO) throws Exception {
+        Optional<User> user= userRepository.findUserByUsername(userDTO.getUsername());
+        if(user.isPresent()){
+            if(passwordEncoder.matches(userDTO.getPassword(),user.get().getPassword())){
+                return userConverter.entityToDto(user.get());
             }
-        }else{
-            throw new Exception("Erreur d'identification");
         }
+        throw new NoSuchElementException("Erreur d'identification");
     }
 
 }

@@ -1,6 +1,6 @@
 name: Maven CI/CD
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build_and_test:
@@ -32,3 +32,6 @@ jobs:
           with:
             name: Package
             path: staging
+        - uses: geekyeggo/delete-artifact@v1
+          with:
+            name: Package  
