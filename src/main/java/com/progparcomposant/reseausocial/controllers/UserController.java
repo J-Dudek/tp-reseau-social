@@ -81,12 +81,12 @@ public class UserController {
         return userConverter.entityToDto(userRepository.save(this.userConverter.dtoToEntity(newUserDto)));
     }
 
-    @PutMapping(path = "/{userId}")
-    public UserDTO updateUser(@PathVariable("userId") Long userId, @RequestBody UserDTO newUserDto) {
+    @PutMapping(path="/{userId}")
+    public UserDTO updateUser( @PathVariable("userId") Long userId, @RequestBody UserDTO newUserDto){
         Optional<User> user = this.userRepository.findById(userId);
-        if (user.isPresent()) {
+        if(user.isPresent()){
             return userConverter.entityToDto(userRepository.save(this.userConverter.dtoToEntity(newUserDto)));
-        } else if (!userId.equals(newUserDto.getIdUser())) {
+        }else if(!userId.equals(newUserDto.getIdUser())){
             throw new IllegalArgumentException(String.valueOf(newUserDto.getIdUser()));
         } else {
             throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
@@ -94,7 +94,7 @@ public class UserController {
     }
 
     @DeleteMapping(path = "/{userId}")
-    public void deleteUserById(@PathVariable("userId") Long userId) {
+    public void deleteUserById(@PathVariable("userId") Long userId){
         Optional<User> user = this.userRepository.findById(userId);
         if (user.isPresent()) {
             this.userRepository.deleteById(userId);
