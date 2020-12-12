@@ -73,12 +73,12 @@ public class PostController {
         }
     }
 
-    @PostMapping(path = "/")
+    @PostMapping(path = "/create")
     public PostDTO createPost(@RequestBody PostDTO newPostDto) {
         return postConverter.entityToDto(postRepository.save(this.postConverter.dtoToEntity(newPostDto)));
     }
 
-    @PutMapping(path = "/{postId}")
+    @PutMapping(path = "/{postId}/update")
     public PostDTO updatePost(@PathVariable("postId") Long postId, @RequestBody PostDTO newPostDto) {
         Optional<Post> post = this.postRepository.findById(postId);
         if (post.isPresent()) {
@@ -88,7 +88,7 @@ public class PostController {
         }
     }
 
-    @DeleteMapping(path = "/{postId}")
+    @DeleteMapping(path = "/{postId}/delete")
     public void deletePostById(@PathVariable("postId") Long postId) {
         Optional<Post> post = this.postRepository.findById(postId);
         if (post.isPresent()) {
@@ -98,15 +98,25 @@ public class PostController {
         }
     }
 
-    @DeleteMapping
-    public void deleteAllPost() {
-        this.postRepository.deleteAll();
+    @DeleteMapping(path = "/delete/all")
+    public void deleteAllPosts() {
+        Iterable<Post> posts = this.postRepository.findAll();
+        if (IterableUtils.size(posts) > 0) {
+            this.postRepository.deleteAll();
+        } else {
+            throw new NoSuchElementException(ErrorMessagesEnum.POST_NO_POSTS_IN_DATABASE.getErrorMessage());
+        }
     }
 
-    @DeleteMapping(path = "/list/{listIds}")
-    public void deletePostsByIds(@PathVariable("listIds") List<Long> listIds) {
-        for (Long ids : listIds) {
-            this.postRepository.deleteById(ids);
+    @DeleteMapping(path = "/{ids}/delete/list")
+    public void deletePostsByIds(@PathVariable("ids") List<Long> ids) {
+        Iterable<Post> posts = this.postRepository.findAllByIdIn(ids);
+        if (IterableUtils.size(posts) > 0) {
+            for (Long id : ids) {
+                this.postRepository.deleteById(id);
+            }
+        } else {
+            throw new NoSuchElementException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
         }
     }
 }

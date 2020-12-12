@@ -26,7 +26,7 @@ public class UserController {
         this.userConverter = userConverter;
     }
 
-    @GetMapping
+    @GetMapping(path = "/all")
     public List<UserDTO> findAllUsers() {
         Iterable<User> users = this.userRepository.findAll();
         if (IterableUtils.size(users) > 0) {
@@ -46,7 +46,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(path = "/name/{userName}")
+    @GetMapping(path = "/{userName}/name")
     public UserDTO findUserByName(@PathVariable("userName") String userName) {
         Optional<User> user = this.userRepository.findUsersByUsername(userName);
         if (user.isPresent()) {
@@ -56,7 +56,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(path = "/email/{email}")
+    @GetMapping(path = "/{email}/email")
     public UserDTO findUserByEmail(@PathVariable("email") String email) {
         Optional<User> user = this.userRepository.findUserByEmail(email);
         if (user.isPresent()) {
@@ -66,7 +66,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(path = "/phone/{phoneNumber}")
+    @GetMapping(path = "/{phoneNumber}/phone")
     public UserDTO findUserByPhoneNumber(@PathVariable("phoneNumber") String phoneNumber) {
         Optional<User> user = this.userRepository.findUserByPhoneNumber(phoneNumber);
         if (user.isPresent()) {
@@ -76,12 +76,12 @@ public class UserController {
         }
     }
 
-    @PostMapping
+    @PostMapping(path = "/create")
     public UserDTO createUser(@RequestBody UserDTO newUserDto) {
         return userConverter.entityToDto(userRepository.save(this.userConverter.dtoToEntity(newUserDto)));
     }
 
-    @PutMapping(path="/{userId}")
+    @PutMapping(path="/{userId}/update")
     public UserDTO updateUser( @PathVariable("userId") Long userId, @RequestBody UserDTO newUserDto){
         Optional<User> user = this.userRepository.findById(userId);
         if(user.isPresent()){
@@ -93,7 +93,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping(path = "/{userId}")
+    @DeleteMapping(path = "/{userId}/delete")
     public void deleteUserById(@PathVariable("userId") Long userId){
         Optional<User> user = this.userRepository.findById(userId);
         if (user.isPresent()) {
@@ -103,10 +103,9 @@ public class UserController {
         }
     }
 
-    @DeleteMapping
+    @DeleteMapping("/delete/all")
     public void deleteAllUsers() {
         Iterable<User> users = this.userRepository.findAll();
-
         if (IterableUtils.size(users) > 0) {
             this.userRepository.deleteAll();
         } else {
@@ -114,10 +113,15 @@ public class UserController {
         }
     }
 
-    @DeleteMapping(path = "/list/{listIds}")
-    public void deleteUsersByIds(@PathVariable("listIds") List<Long> listIds) {
-        for (Long id : listIds) {
-            this.userRepository.deleteById(id);
+    @DeleteMapping(path = "/{ids}/delete/list")
+    public void deleteUsersByIds(@PathVariable("ids") List<Long> ids) {
+        Iterable<User> users = this.userRepository.findByIdIn(ids);
+        if (IterableUtils.size(users) > 0) {
+            for (Long id : ids) {
+                this.userRepository.deleteById(id);
+            }
+        } else {
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 }

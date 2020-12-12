@@ -33,7 +33,17 @@ public class FriendshipController {
         this.userConverter = userConverter;
     }
 
-    @GetMapping(path="/{userId}")
+    @GetMapping("/all")
+    public List<FriendshipDTO> findAllFriendships() {
+        Iterable<Friendship> friendships = this.friendshipRepository.findAll();
+        if (IterableUtils.size(friendships) > 0) {
+            return this.friendshipConverter.entityToDto(IterableUtils.toList(friendships));
+        } else {
+            throw new NoSuchElementException(ErrorMessagesEnum.FRIENDSHIP_NO_FRIENDSHIPS_IN_DATABASE.getErrorMessage());
+        }
+    }
+
+    @GetMapping(path = "/{userId}")
     public List<UserDTO> findFriendsByUserId(@PathVariable("userId") Long userId) {
         Iterable<Friendship> friendships = this.friendshipRepository.findFriendshipsByFirstUserIdOrSecondUserId(userId, userId);
         if (IterableUtils.size(friendships) > 0) {
@@ -62,8 +72,8 @@ public class FriendshipController {
         }
     }
 
-    @DeleteMapping(path = "/delete/{firstUserId}/{secondUserId}")
-    public void deleteFriend(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) {
+    @DeleteMapping(path = "/{firstUserId}/delete/{secondUserId}")
+    public void deleteFriendByFriendId(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) {
         Optional<Friendship> friendship = this.friendshipRepository.findByFirstUserIdAndSecondUserId(firstUserId, secondUserId);
         if (friendship.isEmpty()) {
             friendship = this.friendshipRepository.findByFirstUserIdAndSecondUserId(secondUserId, firstUserId);
@@ -75,7 +85,7 @@ public class FriendshipController {
         this.friendshipRepository.deleteByFirstUserIdAndSecondUserId(friendshipDTO.getFirstUserId(), friendshipDTO.getSecondUserId());
     }
 
-    @DeleteMapping(path = "/delete/{userId}/all")
+    @DeleteMapping(path = "/{userId}/delete/all")
     public void deleteAllUserFriends(@PathVariable("userId") Long userId) {
         Iterable<Friendship> friendships = this.friendshipRepository.findFriendshipsByFirstUserIdOrSecondUserId(userId, userId);
         if (IterableUtils.size(friendships) > 0) {
@@ -83,6 +93,5 @@ public class FriendshipController {
         } else {
             throw new NoSuchElementException(ErrorMessagesEnum.FRIENDSHIP_USER_WITH_NO_FRIENDS.getErrorMessage());
         }
-
     }
 }

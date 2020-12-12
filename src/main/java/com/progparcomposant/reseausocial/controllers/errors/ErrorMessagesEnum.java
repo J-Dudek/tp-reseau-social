@@ -21,6 +21,7 @@ public enum ErrorMessagesEnum {
 
     // Friendship Entity error messages
     FRIENDSHIP_NOT_FOUND("aucune amitiée trouvée"),
+    FRIENDSHIP_NO_FRIENDSHIPS_IN_DATABASE("aucune relation d'amitié dans la base de données"),
     FRIENDSHIP_USER_WITH_NO_FRIENDS("ce user n'a pas d'amis"),
 
     // Main Controller error messages

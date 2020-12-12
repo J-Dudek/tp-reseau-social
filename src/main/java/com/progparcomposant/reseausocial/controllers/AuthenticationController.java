@@ -16,13 +16,13 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/account")
-public class MainController {
+public class AuthenticationController {
 
     private final UserConverter userConverter;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public MainController(UserConverter userConverter, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthenticationController(UserConverter userConverter, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userConverter = userConverter;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;

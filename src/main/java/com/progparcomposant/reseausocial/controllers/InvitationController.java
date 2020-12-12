@@ -31,10 +31,9 @@ public class InvitationController {
         this.invitationConverter = invitationConverter;
     }
 
-    @GetMapping
+    @GetMapping(path = "/all")
     public List<InvitationDTO> findAllInvitations() {
         Iterable<Invitation> invitations = this.invitationRepository.findAll();
-
         if (IterableUtils.size(invitations) > 0) {
             return this.invitationConverter.entityToDto(IterableUtils.toList(invitations));
         } else {
@@ -42,13 +41,13 @@ public class InvitationController {
         }
     }
 
-    @PostMapping(path = "/new")
+    @PostMapping(path = "/create")
     public InvitationDTO newInvitation(@RequestBody InvitationDTO newInvitationDTO) {
         return invitationConverter.entityToDto(this.invitationRepository.save(invitationConverter.dtoToEntity(newInvitationDTO)));
     }
 
     @GetMapping(path = "/{invitationId}")
-    public InvitationDTO findInvitationById(@PathVariable(name = "invitationId") Long invitationId) {
+    public InvitationDTO findInvitationByInvitationId(@PathVariable(name = "invitationId") Long invitationId) {
         Optional<Invitation> invitation = this.invitationRepository.findById(invitationId);
         if (invitation.isPresent()) {
             return this.invitationConverter.entityToDto(invitation.get());
@@ -57,7 +56,7 @@ public class InvitationController {
         }
     }
 
-    @GetMapping(path = "/{userId}")
+    @GetMapping(path = "/{userId}/all")
     public List<InvitationDTO> findAllInvitationsByUserId(@PathVariable(name = "userId") Long userId) {
         Iterable<Invitation> invitations = this.invitationRepository.findAllByFirstUserId(userId);
         if (IterableUtils.size(invitations) > 0) {
@@ -67,7 +66,7 @@ public class InvitationController {
         }
     }
 
-    @PutMapping(path = "/accept/{firstUserId}/{secondUserId}")
+    @PostMapping(path = "/{firstUserId}/accept/{secondUserId}")
     public void acceptInvitationById(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) throws NotFoundException {
         Optional<Invitation> invitation = this.invitationRepository.findByFirstUserIdAndSecondUserId(firstUserId, secondUserId);
         if (invitation.isPresent()) {
@@ -80,7 +79,7 @@ public class InvitationController {
         }
     }
 
-    @PutMapping(path = "/accept/all/{userId}")
+    @PostMapping(path = "/{userId}/accept/all")
     public void acceptAllInvitations(@PathVariable("userId") Long userId) {
         Iterable<Invitation> invitations = this.invitationRepository.findAllByFirstUserId(userId);
         if (IterableUtils.size(invitations) > 0) {
@@ -94,7 +93,7 @@ public class InvitationController {
         }
     }
 
-    @DeleteMapping(path = "/delete/{firstUserId}/{secondUserId}")
+    @DeleteMapping(path = "/{firstUserId}/delete/{secondUserId}")
     public void deleteInvitationById(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) {
         Optional<Invitation> invitation = this.invitationRepository.findByFirstUserIdAndSecondUserId(firstUserId, secondUserId);
         if (invitation.isPresent()) {
@@ -104,7 +103,7 @@ public class InvitationController {
         }
     }
 
-    @DeleteMapping(path = "/delete/all/{userId}")
+    @DeleteMapping(path = "/{userId}/delete/all/")
     public void deleteAllInvitationsByUserId(@PathVariable("userId") Long userId) {
         this.invitationRepository.deleteAllByFirstUserIdOrSecondUserId(userId, userId);
     }
