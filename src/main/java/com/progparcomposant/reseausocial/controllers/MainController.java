@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -32,6 +33,7 @@ public class MainController {
             throw new Exception("Email already assigned to an account");
         }else{
             userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            userDTO.setSignInDate(new Timestamp(System.currentTimeMillis()));
             this.userRepository.save(this.userConverter.dtoToEntity(userDTO));
         }
     }
