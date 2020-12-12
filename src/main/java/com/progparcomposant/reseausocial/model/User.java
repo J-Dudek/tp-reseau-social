@@ -28,6 +28,7 @@ public class User extends BaseEntity {
     private String city;
     private Timestamp signInDate;
     private String username;
+    @JsonIgnore
     private String password;
 
 
