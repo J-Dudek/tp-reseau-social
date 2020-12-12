@@ -76,7 +76,13 @@ public class FriendshipController {
     }
 
     @DeleteMapping(path = "/delete/{userId}/all")
-    public void deleteFriends(@PathVariable("userId") Long userId) {
-        this.friendshipRepository.deleteFriendshipsByFirstUserIdOrSecondUserId(userId, userId);
+    public void deleteAllUserFriends(@PathVariable("userId") Long userId) {
+        Iterable<Friendship> friendships = this.friendshipRepository.findFriendshipsByFirstUserIdOrSecondUserId(userId, userId);
+        if (IterableUtils.size(friendships) > 0) {
+            this.friendshipRepository.deleteFriendshipsByFirstUserIdOrSecondUserId(userId, userId);
+        } else {
+            throw new NoSuchElementException(ErrorMessagesEnum.FRIENDSHIP_USER_WITH_NO_FRIENDS.getErrorMessage());
+        }
+
     }
 }
