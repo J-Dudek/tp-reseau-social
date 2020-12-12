@@ -98,7 +98,7 @@ public class PostController {
         }
     }
 
-    @DeleteMapping(path = "")
+    @DeleteMapping
     public void deleteAllPost() {
         this.postRepository.deleteAll();
     }

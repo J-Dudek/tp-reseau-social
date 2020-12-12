@@ -76,7 +76,7 @@ public class UserController {
         }
     }
 
-    @PostMapping(path = "/")
+    @PostMapping
     public UserDTO createUser( @RequestBody UserDTO newUserDto ){
         return userConverter.entityToDto(userRepository.save(this.userConverter.dtoToEntity(newUserDto)));
     }
@@ -103,7 +103,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping(path = "")
+    @DeleteMapping
     public void deleteAllUsers(){ this.userRepository.deleteAll();}
 
     @DeleteMapping(path = "/list/{listIds}")
