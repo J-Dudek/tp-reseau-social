@@ -1,11 +1,10 @@
 package com.progparcomposant.reseausocial.controllers;
 
 
+import com.progparcomposant.reseausocial.controllers.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.UserDTO;
 import com.progparcomposant.reseausocial.model.User;
-import com.progparcomposant.reseausocial.repositories.FriendshipRepository;
-import com.progparcomposant.reseausocial.repositories.InvitationRepository;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.web.bind.annotation.*;
@@ -20,49 +19,45 @@ import java.util.Optional;
 public class UserController {
 
     private final UserRepository userRepository;
-    private final FriendshipRepository friendshipRepository;
-    private final InvitationRepository invitationRepository;
     private final UserConverter userConverter;
 
-    public UserController(UserConverter userConverter,UserRepository userRepository, FriendshipRepository friendshipRepository, InvitationRepository invitationRepository) {
+    public UserController(UserConverter userConverter, UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.friendshipRepository = friendshipRepository;
-        this.invitationRepository = invitationRepository;
         this.userConverter = userConverter;
     }
 
     @GetMapping
-    public List<UserDTO> findUsers() {
+    public List<UserDTO> findAllUsers() {
         Iterable<User> users = this.userRepository.findAll();
         if (IterableUtils.size(users) > 0) {
             return this.userConverter.entityToDto(IterableUtils.toList(users));
         } else {
-            throw new NoSuchElementException("Aucun user dans la bdd");
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NO_USERS_IN_DATABASE.getErrorMessage());
         }
     }
 
     @GetMapping(path = "/{userId}")
-    public UserDTO findUserById(@PathVariable("userId") Long userId) {
+    public UserDTO findUserByUserId(@PathVariable("userId") Long userId) {
         Optional<User> user = this.userRepository.findById(userId);
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
         } else {
-            throw new NoSuchElementException("Ce user n'existe pas");
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 
     @GetMapping(path = "/name/{userName}")
-    public UserDTO findUserByName(@PathVariable("userName") String userName){
+    public UserDTO findUserByName(@PathVariable("userName") String userName) {
         Optional<User> user = this.userRepository.findUsersByUsername(userName);
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
         } else {
-            throw new NoSuchElementException("Aucun user avec ce nom");
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NO_USER_WITH_THAT_NAME.getErrorMessage());
         }
     }
 
     @GetMapping(path = "/email/{email}")
-    public UserDTO findUserByEmail( @PathVariable("email") String email){
+    public UserDTO findUserByEmail(@PathVariable("email") String email) {
         Optional<User> user = this.userRepository.findUserByEmail(email);
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
@@ -72,7 +67,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/phone/{phoneNumber}")
-    public UserDTO findUserByPhoneNumber( @PathVariable("phoneNumber") String phoneNumber){
+    public UserDTO findUserByPhoneNumber(@PathVariable("phoneNumber") String phoneNumber) {
         Optional<User> user = this.userRepository.findUserByPhoneNumber(phoneNumber);
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
@@ -81,8 +76,8 @@ public class UserController {
         }
     }
 
-    @PostMapping(path = "/")
-    public UserDTO createUser( @RequestBody UserDTO newUserDto ){
+    @PostMapping
+    public UserDTO createUser(@RequestBody UserDTO newUserDto) {
         return userConverter.entityToDto(userRepository.save(this.userConverter.dtoToEntity(newUserDto)));
     }
 
@@ -93,8 +88,8 @@ public class UserController {
             return userConverter.entityToDto(userRepository.save(this.userConverter.dtoToEntity(newUserDto)));
         }else if(!userId.equals(newUserDto.getIdUser())){
             throw new IllegalArgumentException(String.valueOf(newUserDto.getIdUser()));
-        }else{
-            throw new NoSuchElementException("PostId inexistant");
+        } else {
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -104,16 +99,24 @@ public class UserController {
         if (user.isPresent()) {
             this.userRepository.deleteById(userId);
         } else {
-            throw new NoSuchElementException("Ce user n'existe pas");
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 
-    @DeleteMapping(path = "")
-    public void deleteAllUsers(){ this.userRepository.deleteAll();}
+    @DeleteMapping
+    public void deleteAllUsers() {
+        Iterable<User> users = this.userRepository.findAll();
+
+        if (IterableUtils.size(users) > 0) {
+            this.userRepository.deleteAll();
+        } else {
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NO_USERS_IN_DATABASE.getErrorMessage());
+        }
+    }
 
     @DeleteMapping(path = "/list/{listIds}")
-    public void deleteUsersByIds(@PathVariable("listIds") List<Long> listIds){
-        for(Long id : listIds) {
+    public void deleteUsersByIds(@PathVariable("listIds") List<Long> listIds) {
+        for (Long id : listIds) {
             this.userRepository.deleteById(id);
         }
     }

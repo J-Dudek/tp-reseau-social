@@ -11,4 +11,5 @@ public interface InvitationRepository extends CrudRepository<Invitation, Long> {
     Optional<Invitation> findByFirstUserIdAndSecondUserId(Long firstUserId, Long secondUserId);
     void deleteByFirstUserIdAndSecondUserId(Long firstUserId, Long secondUserId);
     void deleteAllByFirstUserId(Long firstUserId);
+    void deleteAllByFirstUserIdOrSecondUserId(Long firstUserId, Long secondUserId);
 }

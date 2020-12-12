@@ -1,5 +1,6 @@
 package com.progparcomposant.reseausocial.controllers;
 
+import com.progparcomposant.reseausocial.controllers.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.UserDTO;
 import com.progparcomposant.reseausocial.model.User;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Timestamp;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -29,10 +29,10 @@ public class MainController {
     }
 
     @PostMapping("/register")
-    public void register(@RequestBody UserDTO userDTO) throws Exception {
-        if(userRepository.findUserByEmail(userDTO.getEmail()).isPresent()){
-            throw new Exception("Email already assigned to an account");
-        }else{
+    public void register(@RequestBody UserDTO userDTO) {
+        if (userRepository.findUserByEmail(userDTO.getEmail()).isPresent()) {
+            throw new RuntimeException(ErrorMessagesEnum.AUTH_EMAIL_ALREADY_ASSIGNED.getErrorMessage());
+        } else {
             userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             userDTO.setSignInDate(new Timestamp(System.currentTimeMillis()));
             this.userRepository.save(this.userConverter.dtoToEntity(userDTO));
@@ -40,14 +40,13 @@ public class MainController {
     }
 
     @PostMapping("/login")
-    public UserDTO login(@RequestBody UserDTO userDTO) throws Exception {
-        Optional<User> user= userRepository.findUserByUsername(userDTO.getUsername());
-        if(user.isPresent()){
-            if(passwordEncoder.matches(userDTO.getPassword(),user.get().getPassword())){
-                return userConverter.entityToDto(user.get());
-            }
+    public UserDTO login(@RequestBody UserDTO userDTO) {
+        Optional<User> user = userRepository.findUserByUsername(userDTO.getUsername());
+        if (user.isPresent() && passwordEncoder.matches(userDTO.getPassword(), user.get().getPassword())) {
+            return userConverter.entityToDto(user.get());
+        } else {
+            throw new RuntimeException(ErrorMessagesEnum.AUTH_ERROR.getErrorMessage());
         }
-        throw new NoSuchElementException("Erreur d'identification");
     }
 
 }

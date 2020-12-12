@@ -1,10 +1,13 @@
 package com.progparcomposant.reseausocial.controllers;
 
+import com.progparcomposant.reseausocial.controllers.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.converters.PostConverter;
 import com.progparcomposant.reseausocial.dto.PostDTO;
 import com.progparcomposant.reseausocial.model.Post;
+import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.PostRepository;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,104 +28,84 @@ public class PostController {
         this.postConverter = postConverter;
     }
 
-    /**
-     *
-     * @return Iterable<PostDTO>
-     */
     @GetMapping
-    public Iterable<PostDTO> findPosts(){ return this.postConverter.entityToDto((List<Post>) this.postRepository.findAll()); }
+    public List<PostDTO> findPosts() {
+        Iterable<Post> posts = this.postRepository.findAll();
+        if (IterableUtils.size(posts) > 0) {
+            return this.postConverter.entityToDto(IterableUtils.toList(posts));
+        } else {
+            throw new NoSuchElementException(ErrorMessagesEnum.POST_NO_POSTS_IN_DATABASE.getErrorMessage());
+        }
+    }
 
-    /**
-     *
-     * @param postId
-     * @return PostDTO
-     * @throws NoSuchElementException
-     */
-    @GetMapping(path="/{postId}")
-    public PostDTO findPostById(@PathVariable("postId") Long postId) throws NoSuchElementException{
-
+    @GetMapping(path = "/{postId}")
+    public PostDTO findPostByPostId(@PathVariable("postId") Long postId) {
         Optional<Post> post = this.postRepository.findById(postId);
-        //Check if @param postId is in Database
-        if(post.isPresent()){
+        if (post.isPresent()) {
             return this.postConverter.entityToDto(post.get());
-        }else{
-            throw new NoSuchElementException("UserId inexistant");
+        } else {
+            throw new NoSuchElementException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
         }
     }
 
-    /**
-     *
-     * @param userId
-     * @return
-     */
     @GetMapping(path = "/user/{userId}")
-    public Iterable<PostDTO> findPostsByUser(@PathVariable("userId") Long userId){
-        if(!userRepository.existsById(userId)){
-            throw new NoSuchElementException("UserId inexistant");
+    public List<PostDTO> findPostsByUserId(@PathVariable("userId") Long userId) {
+        Optional<User> user = this.userRepository.findById(userId);
+        if (user.isPresent()) {
+            Iterable<Post> posts = this.postRepository.findAllByUserId(userId);
+            if (IterableUtils.size(posts) > 0) {
+                return this.postConverter.entityToDto(IterableUtils.toList(posts));
+            } else {
+                throw new NoSuchElementException(ErrorMessagesEnum.POST_NO_POST_YET.getErrorMessage());
+            }
+        } else {
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
-        return this.postConverter.entityToDto((List<Post>) this.postRepository.findAllByUserId(userId));
     }
 
-    /**
-     *
-     * @param listIds
-     * @return Iterable<PostDTO>
-     */
-    @GetMapping(path="/list/{listIds}")
-    public Iterable<PostDTO> findListPostsByIds(@PathVariable("listIds") List<Long> listIds){
-        return this.postConverter.entityToDto((List<Post>) this.postRepository.findAllByIdIn(listIds));}
-
-    /**
-     *
-      * @param newPostDto
-     * @return PostDTO
-     */
-    @PostMapping(path="/")
-    public PostDTO createPost( @RequestBody PostDTO newPostDto){
-        return  postConverter.entityToDto(postRepository.save(this.postConverter.dtoToEntity(newPostDto)));
+    @GetMapping(path = "/list/{listIds}")
+    public List<PostDTO> findListPostsByIds(@PathVariable("listIds") List<Long> ids) {
+        Iterable<Post> posts = this.postRepository.findAllByIdIn((ids));
+        if (IterableUtils.size(posts) > 0) {
+            return this.postConverter.entityToDto(IterableUtils.toList(posts));
+        } else {
+            throw new NoSuchElementException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
+        }
     }
 
-    /**
-     *
-     * @param postId
-     * @param newPostDto
-     * @return PostDTO
-     */
-    @PutMapping(path="/{postId}")
-    public PostDTO updatePost( @PathVariable("postId") Long postId, @RequestBody PostDTO newPostDto){
+    @PostMapping(path = "/")
+    public PostDTO createPost(@RequestBody PostDTO newPostDto) {
+        return postConverter.entityToDto(postRepository.save(this.postConverter.dtoToEntity(newPostDto)));
+    }
+
+    @PutMapping(path = "/{postId}")
+    public PostDTO updatePost(@PathVariable("postId") Long postId, @RequestBody PostDTO newPostDto) {
         Optional<Post> post = this.postRepository.findById(postId);
-        if(!post.isPresent()){
-            throw new NoSuchElementException("PostId inexistant");
-        }else if( post.get().getId() != newPostDto.getIdPost()){
-            throw new IllegalArgumentException();
-        }
-        else{
-            return  postConverter.entityToDto(postRepository.save(this.postConverter.dtoToEntity(newPostDto)));
+        if (post.isPresent()) {
+            return postConverter.entityToDto(postRepository.save(this.postConverter.dtoToEntity(newPostDto)));
+        } else {
+            throw new NoSuchElementException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
         }
     }
 
-    /**
-     *
-     * @param postId
-     */
     @DeleteMapping(path = "/{postId}")
-    public void deletePostById(@PathVariable ("postId") Long postId){
-        this.postRepository.deleteById(postId);
+    public void deletePostById(@PathVariable("postId") Long postId) {
+        Optional<Post> post = this.postRepository.findById(postId);
+        if (post.isPresent()) {
+            this.postRepository.deleteById(postId);
+        } else {
+            throw new NoSuchElementException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
+        }
     }
 
-    /**
-     *
-     */
-    @DeleteMapping(path = "")
-    public void deleteAllPost(){ this.postRepository.deleteAll();}
+    @DeleteMapping
+    public void deleteAllPost() {
+        this.postRepository.deleteAll();
+    }
 
-    /**
-     * Should be optimized using deleteByIdIn from repository
-     * @param listIds
-     */
     @DeleteMapping(path = "/list/{listIds}")
-    public void deletePostsByIds(@PathVariable("listIds") List<Long> listIds){
-        for (Long ids : listIds ) {
+    public void deletePostsByIds(@PathVariable("listIds") List<Long> listIds) {
+        for (Long ids : listIds) {
             this.postRepository.deleteById(ids);
         }
     }
