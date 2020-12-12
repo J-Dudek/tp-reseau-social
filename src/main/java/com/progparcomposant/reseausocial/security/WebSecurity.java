@@ -35,7 +35,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .mvcMatchers("/register").permitAll()
-                .mvcMatchers(HttpMethod.GET,"/users").permitAll() //TODO a supprimer avt livraison : pour test
                 .mvcMatchers("/users/*").hasAuthority("SCOPE_read:messages")
                 .mvcMatchers("/posts/*").hasAuthority("SCOPE_read:messages")
                 .mvcMatchers("/invitations/*").hasAuthority("SCOPE_read:messages")
