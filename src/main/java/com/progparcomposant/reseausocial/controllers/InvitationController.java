@@ -1,5 +1,6 @@
 package com.progparcomposant.reseausocial.controllers;
 
+import com.progparcomposant.reseausocial.controllers.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.converters.FriendshipConverter;
 import com.progparcomposant.reseausocial.converters.InvitationConverter;
 import com.progparcomposant.reseausocial.dto.FriendshipDTO;
@@ -41,7 +42,7 @@ public class InvitationController {
         if (invitation.isPresent()) {
             return this.invitationConverter.entityToDto(invitation.get());
         } else {
-            throw new NoSuchElementException("Cette invitation n'existe pas");
+            throw new NoSuchElementException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -51,7 +52,7 @@ public class InvitationController {
         if (IterableUtils.size(invitations) > 0) {
             return this.invitationConverter.entityToDto(IterableUtils.toList(invitations));
         } else {
-            throw new NoSuchElementException("Ce user n'a pas d'invitations");
+            throw new NoSuchElementException(ErrorMessagesEnum.INVITATION_NO_INVITATION_YET.getErrorMessage());
         }
     }
 
@@ -64,7 +65,7 @@ public class InvitationController {
             this.friendshipRepository.save(friendshipConverter.dtoToEntity(friendshipDTO));
             this.invitationRepository.deleteByFirstUserIdAndSecondUserId(invitationDTO.getFirstUserId(), invitationDTO.getSecondUserId());
         } else {
-            throw new NotFoundException("Cette invitation n'existe pas");
+            throw new NotFoundException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -78,7 +79,7 @@ public class InvitationController {
             this.friendshipRepository.saveAll(this.friendshipConverter.dtoToEntity(newFriendshipDTOS));
             this.invitationRepository.deleteAllByFirstUserId(userId);
         } else {
-            throw new NoSuchElementException("Ce user n'existe pas");
+            throw new NoSuchElementException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
         }
     }
 

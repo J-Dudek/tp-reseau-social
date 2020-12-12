@@ -1,5 +1,6 @@
 package com.progparcomposant.reseausocial.controllers;
 
+import com.progparcomposant.reseausocial.controllers.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.converters.PostConverter;
 import com.progparcomposant.reseausocial.dto.PostDTO;
 import com.progparcomposant.reseausocial.model.Post;
@@ -33,7 +34,7 @@ public class PostController {
         if (IterableUtils.size(posts) > 0) {
             return this.postConverter.entityToDto(IterableUtils.toList(posts));
         } else {
-            throw new NoSuchElementException("Aucun posts dans la bdd");
+            throw new NoSuchElementException(ErrorMessagesEnum.POST_NO_POSTS_IN_DATABASE.getErrorMessage());
         }
     }
 
@@ -43,7 +44,7 @@ public class PostController {
         if (post.isPresent()) {
             return this.postConverter.entityToDto(post.get());
         } else {
-            throw new NoSuchElementException("UserId inexistant");
+            throw new NoSuchElementException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -55,10 +56,10 @@ public class PostController {
             if (IterableUtils.size(posts) > 0) {
                 return this.postConverter.entityToDto(IterableUtils.toList(posts));
             } else {
-                throw new NoSuchElementException("Aucun post lié à ce user");
+                throw new NoSuchElementException(ErrorMessagesEnum.POST_NO_POST_YET.getErrorMessage());
             }
         } else {
-            throw new NoSuchElementException("Ce user n'existe pas");
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -68,7 +69,7 @@ public class PostController {
         if (IterableUtils.size(posts) > 0) {
             return this.postConverter.entityToDto(IterableUtils.toList(posts));
         } else {
-            throw new NoSuchElementException("Aucun post ne correspond à ces ids");
+            throw new NoSuchElementException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -83,7 +84,7 @@ public class PostController {
         if (post.isPresent()) {
             return postConverter.entityToDto(postRepository.save(this.postConverter.dtoToEntity(newPostDto)));
         } else {
-            throw new NoSuchElementException("PostId inexistant");
+            throw new NoSuchElementException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -93,7 +94,7 @@ public class PostController {
         if (post.isPresent()) {
             this.postRepository.deleteById(postId);
         } else {
-            throw new NoSuchElementException("Ce post n'existe pas");
+            throw new NoSuchElementException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
         }
     }
 
