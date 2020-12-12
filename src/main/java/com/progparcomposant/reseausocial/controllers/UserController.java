@@ -45,6 +45,11 @@ public class UserController {
         return this.userRepository.findById(userId);
     }
 
+    @GetMapping(path = "/name/{userName}")
+    public Optional<User> findUserByName(@PathVariable("userName") String userName){
+        return this.userRepository.findUsersByUsername(userName);
+    }
+
     @GetMapping(path = "/{userId}/friends")
     public List<Optional<User>> findUserFriends(@PathVariable("userId") Long userId) {
         //si l'id n'est pas passé par la session, aprés si on ne le passe pas par la session tt le monde peut voir les amis de tt le monde//
@@ -83,4 +88,14 @@ public class UserController {
 
     @DeleteMapping(path = "/{userId}")
     public void deleteUserById(@PathVariable("userId") Long userId){ this.userRepository.deleteById(userId);}
+
+    @DeleteMapping(path = "")
+    public void deleteAllUsers(){ this.userRepository.deleteAll();}
+
+    @DeleteMapping(path = "/list/{listIds}")
+    public void deleteUsersByIds(@PathVariable("listIds") List<Long> listIds){
+        for(Long ids : listIds) {
+            this.userRepository.deleteById(ids);
+        }
+    }
 }
