@@ -4,11 +4,12 @@ import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.UserDTO;
 import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
-import javassist.NotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.NoSuchElementException;
 import java.util.Optional;
