@@ -2,7 +2,6 @@ package com.progparcomposant.reseausocial.security;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -11,6 +10,9 @@ import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.*;
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
+
+    private static final String SCOPE_READ_MESSAGE = "SCOPE_read:messages";
+
     @Value("${auth0.audience}")
     private String audience;
 
@@ -35,10 +37,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .mvcMatchers("/register").permitAll()
-                .mvcMatchers("/users/*").hasAuthority("SCOPE_read:messages")
-                .mvcMatchers("/posts/*").hasAuthority("SCOPE_read:messages")
-                .mvcMatchers("/invitations/*").hasAuthority("SCOPE_read:messages")
-                .mvcMatchers("/friends/*").hasAuthority("SCOPE_read:messages")
+                .mvcMatchers("/users/*").hasAuthority(SCOPE_READ_MESSAGE)
+                .mvcMatchers("/posts/*").hasAuthority(SCOPE_READ_MESSAGE)
+                .mvcMatchers("/invitations/*").hasAuthority(SCOPE_READ_MESSAGE)
+                .mvcMatchers("/friends/*").hasAuthority(SCOPE_READ_MESSAGE)
                 .and().cors()
                 .and().oauth2ResourceServer().jwt()
         ;
