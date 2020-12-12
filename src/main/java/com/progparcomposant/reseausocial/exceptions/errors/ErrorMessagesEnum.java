@@ -1,4 +1,4 @@
-package com.progparcomposant.reseausocial.controllers.errors;
+package com.progparcomposant.reseausocial.exceptions.errors;
 
 public enum ErrorMessagesEnum {
 
@@ -13,6 +13,7 @@ public enum ErrorMessagesEnum {
     POST_NOT_FOUND("aucun post trouvé"),
     POST_NO_POSTS_IN_DATABASE("aucun posts dans la base de données"),
     POST_NO_POST_YET("ce user n'a ecrit aucun post"),
+    POST_NOT_PUBLIC("ce post n'est pas publique"),
 
     // Invitation Entity error messages
     INVITATION_NOT_FOUND("aucune invitation trouvée"),
