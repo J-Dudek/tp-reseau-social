@@ -1,5 +1,6 @@
 package com.progparcomposant.reseausocial.controllers;
 
+import com.progparcomposant.reseausocial.controllers.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.converters.FriendshipConverter;
 import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.FriendshipDTO;
@@ -40,7 +41,7 @@ public class FriendshipController {
             friendships.forEach(friendship -> friendsIds.add(friendship.getSecondUserId()));
             return this.userConverter.entityToDto(this.userRepository.findByIdIn(friendsIds));
         } else {
-            throw new NoSuchElementException("Ce user n'existe pas");
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -54,20 +55,20 @@ public class FriendshipController {
             if (user.isPresent()) {
                 return this.userConverter.entityToDto(user.get());
             } else {
-                throw new NoSuchElementException("Ce user n'existe pas");
+                throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
             }
         } else {
-            throw new NoSuchElementException("Cette amitié n'existe pas");
+            throw new NoSuchElementException(ErrorMessagesEnum.FRIENDSHIP_NOT_FOUND.getErrorMessage());
         }
     }
 
     @DeleteMapping(path = "/delete/{firstUserId}/{secondUserId}")
     public void deleteFriend(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) {
-        Optional<Friendship> friendship = this.friendshipRepository.findByFirstUserIdAndSecondUserId(firstUserId, secondUserId);;
+        Optional<Friendship> friendship = this.friendshipRepository.findByFirstUserIdAndSecondUserId(firstUserId, secondUserId);
         if (friendship.isEmpty()) {
             friendship = this.friendshipRepository.findByFirstUserIdAndSecondUserId(secondUserId, firstUserId);
             if (friendship.isEmpty()) {
-                throw new NoSuchElementException("Cette amitié n'existe pas");
+                throw new NoSuchElementException(ErrorMessagesEnum.FRIENDSHIP_NOT_FOUND.getErrorMessage());
             }
         }
         FriendshipDTO friendshipDTO = this.friendshipConverter.entityToDto(friendship.get());

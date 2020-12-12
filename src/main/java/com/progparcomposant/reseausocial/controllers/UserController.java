@@ -1,11 +1,10 @@
 package com.progparcomposant.reseausocial.controllers;
 
 
+import com.progparcomposant.reseausocial.controllers.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.UserDTO;
 import com.progparcomposant.reseausocial.model.User;
-import com.progparcomposant.reseausocial.repositories.FriendshipRepository;
-import com.progparcomposant.reseausocial.repositories.InvitationRepository;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.web.bind.annotation.*;
@@ -20,14 +19,10 @@ import java.util.Optional;
 public class UserController {
 
     private final UserRepository userRepository;
-    private final FriendshipRepository friendshipRepository;
-    private final InvitationRepository invitationRepository;
     private final UserConverter userConverter;
 
-    public UserController(UserConverter userConverter,UserRepository userRepository, FriendshipRepository friendshipRepository, InvitationRepository invitationRepository) {
+    public UserController(UserConverter userConverter,UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.friendshipRepository = friendshipRepository;
-        this.invitationRepository = invitationRepository;
         this.userConverter = userConverter;
     }
 
@@ -37,7 +32,7 @@ public class UserController {
         if (IterableUtils.size(users) > 0) {
             return this.userConverter.entityToDto(IterableUtils.toList(users));
         } else {
-            throw new NoSuchElementException("Aucun user dans la bdd");
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NO_USERS_IN_DATABASE.getErrorMessage());
         }
     }
 
@@ -47,7 +42,7 @@ public class UserController {
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
         } else {
-            throw new NoSuchElementException("Ce user n'existe pas");
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -57,7 +52,7 @@ public class UserController {
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
         } else {
-            throw new NoSuchElementException("Aucun user avec ce nom");
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NO_USER_WITH_THAT_NAME.getErrorMessage());
         }
     }
 
@@ -94,7 +89,7 @@ public class UserController {
         }else if(!userId.equals(newUserDto.getIdUser())){
             throw new IllegalArgumentException(String.valueOf(newUserDto.getIdUser()));
         }else{
-            throw new NoSuchElementException("PostId inexistant");
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -104,7 +99,7 @@ public class UserController {
         if (user.isPresent()) {
             this.userRepository.deleteById(userId);
         } else {
-            throw new NoSuchElementException("Ce user n'existe pas");
+            throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 
