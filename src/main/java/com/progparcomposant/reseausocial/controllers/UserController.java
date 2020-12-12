@@ -1,6 +1,7 @@
 package com.progparcomposant.reseausocial.controllers;
 
 
+import com.progparcomposant.reseausocial.controllers.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.UserDTO;
 import com.progparcomposant.reseausocial.model.User;
