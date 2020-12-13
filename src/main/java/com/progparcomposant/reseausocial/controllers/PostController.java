@@ -1,34 +1,32 @@
 package com.progparcomposant.reseausocial.controllers;
 
-import com.progparcomposant.reseausocial.controllers.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.converters.PostConverter;
 import com.progparcomposant.reseausocial.dto.PostDTO;
+import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
+import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.model.Post;
-import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.PostRepository;
-import com.progparcomposant.reseausocial.repositories.UserRepository;
+import com.progparcomposant.reseausocial.services.FriendshipService;
+import com.progparcomposant.reseausocial.services.PostService;
+import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping(path = "/posts")
 public class PostController {
 
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
     private final PostConverter postConverter;
+    private final FriendshipService friendshipService;
+    private final PostService postService;
 
-    public PostController(PostRepository postRepository, UserRepository userRepository, PostConverter postConverter) {
-        this.postRepository = postRepository;
-        this.userRepository = userRepository;
-        this.postConverter = postConverter;
-    }
-
-    @GetMapping
+    @GetMapping(path = "/all")
     public List<PostDTO> findPosts() {
         Iterable<Post> posts = this.postRepository.findAll();
         if (IterableUtils.size(posts) > 0) {
@@ -38,85 +36,59 @@ public class PostController {
         }
     }
 
-    @GetMapping(path = "/{postId}")
-    public PostDTO findPostByPostId(@PathVariable("postId") Long postId) {
-        Optional<Post> post = this.postRepository.findById(postId);
-        if (post.isPresent()) {
-            return this.postConverter.entityToDto(post.get());
+    @GetMapping(path = "/{readerId}/{postId}")
+    public PostDTO findPostByPostId(@PathVariable("readerId") Long readerId, @PathVariable("postId") Long postId) {
+        PostDTO postDTO = this.postService.findPostByPostId(postId);
+        if (this.friendshipService.isFriendshipExists(readerId, postDTO.getUserId()) || postDTO.isPublic() || postDTO.getUserId().equals(readerId)) {
+            return postDTO;
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.POST_NOT_PUBLIC.getErrorMessage());
         }
     }
 
-    @GetMapping(path = "/user/{userId}")
-    public List<PostDTO> findPostsByUserId(@PathVariable("userId") Long userId) {
-        Optional<User> user = this.userRepository.findById(userId);
-        if (user.isPresent()) {
-            Iterable<Post> posts = this.postRepository.findAllByUserId(userId);
-            if (IterableUtils.size(posts) > 0) {
-                return this.postConverter.entityToDto(IterableUtils.toList(posts));
-            } else {
-                throw new NoSuchElementException(ErrorMessagesEnum.POST_NO_POST_YET.getErrorMessage());
+    @GetMapping(path = "/{readerId}/{authorId}")
+    public List<PostDTO> findPostsByAuthorId(@PathVariable("readerId") Long readerId, @PathVariable("authorId") Long authorId) {
+        if (this.friendshipService.isFriendshipExists(readerId, authorId)) {
+            return this.postService.findAllPostsByUserId(authorId);
+        } else {
+            return this.postService.findPublicPostsByUserId(authorId);
+        }
+    }
+
+    @GetMapping(path = "/{readerId}/list/{postIds}")
+    public List<PostDTO> findListPostsByPostIds(@PathVariable("readerId") Long readerId, @PathVariable("postIds") List<Long> postIds) {
+        List<PostDTO> postsFromDatabase = this.postService.findPostsByIds(postIds);
+        List<PostDTO> postsToReturn = new ArrayList<>();
+        for (PostDTO postDTO : postsFromDatabase) {
+            if (this.friendshipService.isFriendshipExists(readerId, postDTO.getUserId()) || postDTO.isPublic()) {
+                postsToReturn.add(postDTO);
             }
-        } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
-    }
-
-    @GetMapping(path = "/list/{listIds}")
-    public List<PostDTO> findListPostsByIds(@PathVariable("listIds") List<Long> ids) {
-        Iterable<Post> posts = this.postRepository.findAllByIdIn((ids));
-        if (IterableUtils.size(posts) > 0) {
-            return this.postConverter.entityToDto(IterableUtils.toList(posts));
-        } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
-        }
+        return postsToReturn;
     }
 
     @PostMapping(path = "/create")
     public PostDTO createPost(@RequestBody PostDTO newPostDto) {
-        return postConverter.entityToDto(postRepository.save(this.postConverter.dtoToEntity(newPostDto)));
+        return this.postService.createNewPost(newPostDto);
     }
 
     @PutMapping(path = "/{postId}/update")
     public PostDTO updatePost(@PathVariable("postId") Long postId, @RequestBody PostDTO newPostDto) {
-        Optional<Post> post = this.postRepository.findById(postId);
-        if (post.isPresent()) {
-            return postConverter.entityToDto(postRepository.save(this.postConverter.dtoToEntity(newPostDto)));
-        } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
-        }
+        return this.postService.updatePost(postId, newPostDto);
     }
 
     @DeleteMapping(path = "/{postId}/delete")
     public void deletePostById(@PathVariable("postId") Long postId) {
-        Optional<Post> post = this.postRepository.findById(postId);
-        if (post.isPresent()) {
-            this.postRepository.deleteById(postId);
-        } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
-        }
+        this.postService.deletePostById(postId);
     }
 
     @DeleteMapping(path = "/delete/all")
     public void deleteAllPosts() {
-        Iterable<Post> posts = this.postRepository.findAll();
-        if (IterableUtils.size(posts) > 0) {
-            this.postRepository.deleteAll();
-        } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.POST_NO_POSTS_IN_DATABASE.getErrorMessage());
-        }
+        this.postService.deleteAllPosts();
     }
 
-    @DeleteMapping(path = "/{ids}/delete/list")
-    public void deletePostsByIds(@PathVariable("ids") List<Long> ids) {
-        Iterable<Post> posts = this.postRepository.findAllByIdIn(ids);
-        if (IterableUtils.size(posts) > 0) {
-            for (Long id : ids) {
-                this.postRepository.deleteById(id);
-            }
-        } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
-        }
+    @DeleteMapping(path = "/{postIds}/delete/list")
+    public void deletePostsByIds(@PathVariable("postIds") List<Long> postIds) {
+        this.postService.deletePostsByIds(postIds);
     }
 }

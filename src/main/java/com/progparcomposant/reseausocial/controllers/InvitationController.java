@@ -1,10 +1,11 @@
 package com.progparcomposant.reseausocial.controllers;
 
-import com.progparcomposant.reseausocial.controllers.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.converters.FriendshipConverter;
 import com.progparcomposant.reseausocial.converters.InvitationConverter;
 import com.progparcomposant.reseausocial.dto.FriendshipDTO;
 import com.progparcomposant.reseausocial.dto.InvitationDTO;
+import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
+import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.model.Invitation;
 import com.progparcomposant.reseausocial.repositories.FriendshipRepository;
 import com.progparcomposant.reseausocial.repositories.InvitationRepository;
@@ -13,7 +14,10 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/invitations")
@@ -37,7 +41,7 @@ public class InvitationController {
         if (IterableUtils.size(invitations) > 0) {
             return this.invitationConverter.entityToDto(IterableUtils.toList(invitations));
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.INVITATION_NO_INVITATIONS_IN_DATABASE.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NO_INVITATIONS_IN_DATABASE.getErrorMessage());
         }
     }
 
@@ -52,7 +56,7 @@ public class InvitationController {
         if (invitation.isPresent()) {
             return this.invitationConverter.entityToDto(invitation.get());
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -62,7 +66,7 @@ public class InvitationController {
         if (IterableUtils.size(invitations) > 0) {
             return this.invitationConverter.entityToDto(IterableUtils.toList(invitations));
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.INVITATION_NO_INVITATION_YET.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NO_INVITATION_YET.getErrorMessage());
         }
     }
 
@@ -75,7 +79,7 @@ public class InvitationController {
             this.friendshipRepository.save(friendshipConverter.dtoToEntity(friendshipDTO));
             this.invitationRepository.deleteByFirstUserIdAndSecondUserId(invitationDTO.getFirstUserId(), invitationDTO.getSecondUserId());
         } else {
-            throw new NotFoundException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -89,7 +93,7 @@ public class InvitationController {
             this.friendshipRepository.saveAll(this.friendshipConverter.dtoToEntity(newFriendshipDTOS));
             this.invitationRepository.deleteAllByFirstUserId(userId);
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -99,7 +103,7 @@ public class InvitationController {
         if (invitation.isPresent()) {
             this.invitationRepository.deleteByFirstUserIdAndSecondUserId(firstUserId, secondUserId);
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
         }
     }
 
