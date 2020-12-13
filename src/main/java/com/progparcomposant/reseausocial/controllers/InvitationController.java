@@ -1,10 +1,6 @@
 package com.progparcomposant.reseausocial.controllers;
 
-import com.progparcomposant.reseausocial.converters.FriendshipConverter;
-import com.progparcomposant.reseausocial.converters.InvitationConverter;
 import com.progparcomposant.reseausocial.dto.InvitationDTO;
-import com.progparcomposant.reseausocial.repositories.FriendshipRepository;
-import com.progparcomposant.reseausocial.repositories.InvitationRepository;
 import com.progparcomposant.reseausocial.services.InvitationService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +12,6 @@ import java.util.List;
 @RequestMapping(path = "/invitations")
 public class InvitationController {
 
-    private final InvitationRepository invitationRepository;
-    private final FriendshipRepository friendshipRepository;
-    private final FriendshipConverter friendshipConverter;
-    private final InvitationConverter invitationConverter;
     private final InvitationService invitationService;
 
     @GetMapping(path = "/all")
@@ -57,7 +49,7 @@ public class InvitationController {
         this.invitationService.deleteInvitationByUserIds(firstUserId, secondUserId);
     }
 
-    @DeleteMapping(path = "/{userId}/delete/all/")
+    @DeleteMapping(path = "/{userId}/delete/all")
     public void deleteAllInvitationsByUserId(@PathVariable("userId") Long userId) {
         this.invitationService.deleteAllInvitationsByUserId(userId);
     }

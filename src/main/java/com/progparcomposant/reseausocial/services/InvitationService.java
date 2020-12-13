@@ -10,12 +10,14 @@ import com.progparcomposant.reseausocial.repositories.InvitationRepository;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @AllArgsConstructor
 @Service
 public class InvitationService {
@@ -65,14 +67,7 @@ public class InvitationService {
         }
     }
 
-    public void deleteInvitationByUserIds(Long firstUserId, Long secondUserId) {
-        try {
-            InvitationDTO invitationDTO = this.findInvitation(firstUserId, secondUserId);
-            this.invitationRepository.deleteByFirstUserIdAndSecondUserId(invitationDTO.getFirstUserId(), invitationDTO.getSecondUserId());
-        } catch (SocialNetworkException ex) {
-            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
-        }
-    }
+
 
     public void acceptAllInvitations(@PathVariable("userId") Long userId) {
         Iterable<Invitation> invitations = this.invitationRepository.findAllByFirstUserIdOrSecondUserId(userId, userId);
@@ -88,7 +83,16 @@ public class InvitationService {
     }
 
     public void deleteAllInvitationsByUserId(Long userId) {
-        this.invitationRepository.deleteAllByFirstUserIdOrSecondUserId(userId, userId);
+        this.invitationRepository.deleteInvitationsByFirstUserIdOrSecondUserId(userId, userId);
+    }
+
+    public void deleteInvitationByUserIds(Long firstUserId, Long secondUserId) {
+        try {
+            InvitationDTO invitationDTO = this.findInvitation(firstUserId, secondUserId);
+            this.invitationRepository.deleteByFirstUserIdAndSecondUserId(invitationDTO.getFirstUserId(), invitationDTO.getSecondUserId());
+        } catch (SocialNetworkException ex) {
+            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
+        }
     }
 
     private InvitationDTO findInvitation(Long firstUserId, Long secondUserId) {

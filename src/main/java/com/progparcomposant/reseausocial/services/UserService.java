@@ -9,11 +9,13 @@ import com.progparcomposant.reseausocial.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @AllArgsConstructor
 @Service
 public class UserService {

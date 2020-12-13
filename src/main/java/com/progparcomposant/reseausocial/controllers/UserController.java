@@ -1,6 +1,5 @@
 package com.progparcomposant.reseausocial.controllers;
 
-
 import com.fasterxml.jackson.annotation.JsonView;
 import com.progparcomposant.reseausocial.dto.UserDTO;
 import com.progparcomposant.reseausocial.services.UserService;

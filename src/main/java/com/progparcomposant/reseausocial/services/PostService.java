@@ -9,56 +9,64 @@ import com.progparcomposant.reseausocial.repositories.PostRepository;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+@Transactional
 @AllArgsConstructor
 @Service
 public class PostService {
 
     private final PostRepository postRepository;
     private final PostConverter postConverter;
+    private final FriendshipService friendshipService;
 
-    public PostDTO findPostByPostId(Long postId) {
+    public List<PostDTO> findPosts() {
+        Iterable<Post> posts = this.postRepository.findAll();
+        if (IterableUtils.size(posts) > 0) {
+            return this.postConverter.entityToDto(IterableUtils.toList(posts));
+        } else {
+            throw new NoSuchElementException(ErrorMessagesEnum.POST_NO_POSTS_IN_DATABASE.getErrorMessage());
+        }
+    }
+
+    public PostDTO findPostByPostId(Long readerId, Long postId) {
         Optional<Post> post = this.postRepository.findById(postId);
         if (post.isPresent()) {
-            return this.postConverter.entityToDto(post.get());
+            PostDTO postDTO = this.postConverter.entityToDto(post.get());
+            if (this.friendshipService.isFriendshipExists(readerId, postDTO.getUserId()) || postDTO.isPublic() || postDTO.getUserId().equals(readerId)) {
+                return postDTO;
+            } else {
+                throw new SocialNetworkException(ErrorMessagesEnum.POST_NOT_PUBLIC.getErrorMessage());
+            }
         } else {
             throw new NoSuchElementException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
         }
     }
 
-    public List<PostDTO> findAllPostsByUserId(Long userId) {
-        Iterable<Post> posts = this.postRepository.findAllByUserId(userId);
-        if (IterableUtils.size(posts) > 0) {
-            return this.postConverter.entityToDto(IterableUtils.toList(posts));
+    public List<PostDTO> findPostsByAuthorId(Long readerId, Long authorId) {
+        if (this.friendshipService.isFriendshipExists(readerId, authorId)) {
+            return this.findAllPostsByUserId(authorId);
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.POST_NO_POST_YET.getErrorMessage());
+            return this.findPublicPostsByUserId(authorId);
         }
     }
 
-    public List<PostDTO> findPublicPostsByUserId(Long userId) {
-        Iterable<Post> posts = this.postRepository.findAllByUserId(userId);
-        if (IterableUtils.size(posts) > 0) {
-            List<PostDTO> postsToReturn = new ArrayList<>();
-            posts.forEach(post -> {
-                if (post.isPublic()) {
-                    postsToReturn.add(this.postConverter.entityToDto(post));
-                }
-            });
-            return postsToReturn;
-        } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.POST_NO_POST_YET.getErrorMessage());
-        }
-    }
-
-    public List<PostDTO> findPostsByIds(List<Long> postIds) {
+    public List<PostDTO> findPostsByIds(Long readerId, List<Long> postIds) {
         Iterable<Post> posts = this.postRepository.findAllByIdIn((postIds));
         if (IterableUtils.size(posts) > 0) {
-            return this.postConverter.entityToDto(IterableUtils.toList(posts));
+            List<PostDTO> postsFromDatabase = this.postConverter.entityToDto(IterableUtils.toList(posts));
+            List<PostDTO> postsToReturn = new ArrayList<>();
+            for (PostDTO postDTO : postsFromDatabase) {
+                if (this.friendshipService.isFriendshipExists(readerId, postDTO.getUserId()) || postDTO.isPublic()) {
+                    postsToReturn.add(postDTO);
+                }
+            }
+            return postsToReturn;
         } else {
             throw new SocialNetworkException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
         }
@@ -96,7 +104,37 @@ public class PostService {
     }
 
     public void deletePostsByIds(List<Long> postIds) {
-        List<PostDTO> postDTOS = findPostsByIds(postIds);
-        postDTOS.forEach(postDTO -> this.deletePostById(postDTO.getIdPost()));
+        Iterable<Post> posts = this.postRepository.findAllByIdIn(postIds);
+        if (IterableUtils.size(posts) > 0) {
+            List<PostDTO> postDTOS = this.postConverter.entityToDto(IterableUtils.toList(posts));
+            postDTOS.forEach(postDTO -> this.deletePostById(postDTO.getIdPost()));
+        } else {
+            throw new SocialNetworkException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
+        }
+    }
+
+
+    private List<PostDTO> findAllPostsByUserId(Long userId) {
+        Iterable<Post> posts = this.postRepository.findAllByUserId(userId);
+        if (IterableUtils.size(posts) > 0) {
+            return this.postConverter.entityToDto(IterableUtils.toList(posts));
+        } else {
+            throw new SocialNetworkException(ErrorMessagesEnum.POST_NO_POST_YET.getErrorMessage());
+        }
+    }
+
+    private List<PostDTO> findPublicPostsByUserId(Long userId) {
+        Iterable<Post> posts = this.postRepository.findAllByUserId(userId);
+        if (IterableUtils.size(posts) > 0) {
+            List<PostDTO> postsToReturn = new ArrayList<>();
+            posts.forEach(post -> {
+                if (post.isPublic()) {
+                    postsToReturn.add(this.postConverter.entityToDto(post));
+                }
+            });
+            return postsToReturn;
+        } else {
+            throw new SocialNetworkException(ErrorMessagesEnum.POST_NO_POST_YET.getErrorMessage());
+        }
     }
 }

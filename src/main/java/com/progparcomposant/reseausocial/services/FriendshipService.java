@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.sql.Timestamp;
@@ -21,6 +22,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @AllArgsConstructor
 @Service
 @Slf4j
@@ -85,7 +87,7 @@ public class FriendshipService {
     public void deleteFriendByFriendId(Long firstUserId, Long secondUserId) {
         try {
             FriendshipDTO friendshipDTO = this.findFriendship(firstUserId, secondUserId);
-            this.friendshipRepository.deleteByFirstUserIdAndSecondUserId(friendshipDTO.getFirstUserId(), friendshipDTO.getSecondUserId());
+            this.friendshipRepository.deleteFriendshipByFirstUserIdAndSecondUserId(friendshipDTO.getFirstUserId(), friendshipDTO.getSecondUserId());
         } catch (SocialNetworkException ex) {
             throw new SocialNetworkException(ErrorMessagesEnum.FRIENDSHIP_NOT_FOUND.getErrorMessage());
         }

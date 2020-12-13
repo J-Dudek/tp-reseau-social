@@ -9,6 +9,6 @@ public interface FriendshipRepository extends CrudRepository<Friendship, Long> {
 
     Iterable<Friendship> findFriendshipsByFirstUserIdOrSecondUserId(Long firstUserId, Long secondUserId);
     Optional<Friendship> findByFirstUserIdAndSecondUserId(Long firstUserId, Long secondUserId);
-    void deleteByFirstUserIdAndSecondUserId(Long firstUserId, Long secondUserId);
+    void deleteFriendshipByFirstUserIdAndSecondUserId(Long firstUserId, Long secondUserId);
     void deleteFriendshipsByFirstUserIdOrSecondUserId(Long firstUserId, Long secondUserId);
 }
