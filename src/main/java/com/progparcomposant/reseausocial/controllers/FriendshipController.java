@@ -21,7 +21,7 @@ public class FriendshipController {
     private final FriendshipService friendshipService;
 
     @GetMapping("/all")
-    // @JsonView(UserViews.Friends.class)
+    @JsonView(UserViews.Friends.class)
     public List<FriendshipDTO> findAllFriendships() {
         return this.friendshipService.findAllFriendships();
     }
@@ -39,7 +39,11 @@ public class FriendshipController {
     @GetMapping(path = "/{firstUserId}/{secondUserId}")
     @JsonView(UserViews.Friends.class)
     public UserDTO findFriendByFriendId(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) {
-        return this.friendshipService.findFriendByFriendId(firstUserId, secondUserId);
+        try {
+            return this.friendshipService.findFriendByFriendId(firstUserId, secondUserId);
+        } catch (SocialNetworkException exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping(path = "/{firstUserId}/delete/{secondUserId}")
@@ -53,6 +57,10 @@ public class FriendshipController {
 
     @DeleteMapping(path = "/{userId}/delete/all")
     public void deleteAllUserFriends(@PathVariable("userId") Long userId) {
-        this.friendshipService.deleteAllUserFriends(userId);
+        try {
+            this.friendshipService.deleteAllUserFriends(userId);
+        } catch (SocialNetworkException exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.progparcomposant.reseausocial.services;
 import com.progparcomposant.reseausocial.converters.InvitationConverter;
 import com.progparcomposant.reseausocial.dto.FriendshipDTO;
 import com.progparcomposant.reseausocial.dto.InvitationDTO;
+import com.progparcomposant.reseausocial.exceptions.InvitationException;
 import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
 import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.model.Invitation;
@@ -31,7 +32,7 @@ public class InvitationService {
         if (IterableUtils.size(invitations) > 0) {
             return this.invitationConverter.entityToDto(IterableUtils.toList(invitations));
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NO_INVITATIONS_IN_DATABASE.getErrorMessage());
+            throw new InvitationException(ErrorMessagesEnum.INVITATION_NO_INVITATIONS_IN_DATABASE.getErrorMessage());
         }
     }
 
@@ -43,7 +44,7 @@ public class InvitationService {
         try {
             return this.findInvitation(firstUserId, secondUserId);
         } catch (SocialNetworkException ex) {
-            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
+            throw new InvitationException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -52,7 +53,7 @@ public class InvitationService {
         if (IterableUtils.size(invitations) > 0) {
             return this.invitationConverter.entityToDto(IterableUtils.toList(invitations));
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NO_INVITATION_YET.getErrorMessage());
+            throw new InvitationException(ErrorMessagesEnum.INVITATION_NO_INVITATION_YET.getErrorMessage());
         }
     }
 
@@ -63,7 +64,7 @@ public class InvitationService {
             this.friendshipService.saveFriendship(friendshipDTOtoSave);
             this.deleteInvitationByUserIds(invitationDTO.getFirstUserId(), invitationDTO.getSecondUserId());
         } catch (SocialNetworkException ex) {
-            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
+            throw new InvitationException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -78,7 +79,7 @@ public class InvitationService {
             this.friendshipService.saveAllFriendships(newFriendshipDTOS);
             this.deleteAllInvitationsByUserId(userId);
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
+            throw new InvitationException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -91,7 +92,7 @@ public class InvitationService {
             InvitationDTO invitationDTO = this.findInvitation(firstUserId, secondUserId);
             this.invitationRepository.deleteByFirstUserIdAndSecondUserId(invitationDTO.getFirstUserId(), invitationDTO.getSecondUserId());
         } catch (SocialNetworkException ex) {
-            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
+            throw new InvitationException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -104,7 +105,7 @@ public class InvitationService {
             if (invitation.isPresent()) {
                 return this.invitationConverter.entityToDto(invitation.get());
             } else {
-                throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
+                throw new InvitationException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
             }
         }
     }

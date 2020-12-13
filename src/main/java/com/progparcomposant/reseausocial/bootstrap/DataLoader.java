@@ -22,12 +22,16 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe utilsée à lors du déploiement de l'application pour remplir la
+ * base de données H2 avec un minimum de données à manipuler.
+ */
 @AllArgsConstructor
 @Component
 public class DataLoader implements CommandLineRunner {
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         loadUsers();
         loadRelations();
         loadInvitations();

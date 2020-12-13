@@ -2,7 +2,7 @@ package com.progparcomposant.reseausocial.services;
 
 import com.progparcomposant.reseausocial.converters.PostConverter;
 import com.progparcomposant.reseausocial.dto.PostDTO;
-import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
+import com.progparcomposant.reseausocial.exceptions.PostException;
 import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.model.Post;
 import com.progparcomposant.reseausocial.repositories.PostRepository;
@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Transactional
@@ -30,7 +29,7 @@ public class PostService {
         if (IterableUtils.size(posts) > 0) {
             return this.postConverter.entityToDto(IterableUtils.toList(posts));
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.POST_NO_POSTS_IN_DATABASE.getErrorMessage());
+            throw new PostException(ErrorMessagesEnum.POST_NO_POSTS_IN_DATABASE.getErrorMessage());
         }
     }
 
@@ -41,10 +40,10 @@ public class PostService {
             if (this.friendshipService.isFriendshipExists(readerId, postDTO.getUserId()) || postDTO.isPublic() || postDTO.getUserId().equals(readerId)) {
                 return postDTO;
             } else {
-                throw new SocialNetworkException(ErrorMessagesEnum.POST_NOT_PUBLIC.getErrorMessage());
+                throw new PostException(ErrorMessagesEnum.POST_NOT_PUBLIC.getErrorMessage());
             }
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
+            throw new PostException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -68,7 +67,7 @@ public class PostService {
             }
             return postsToReturn;
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
+            throw new PostException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -81,7 +80,7 @@ public class PostService {
         if (post.isPresent()) {
             return postConverter.entityToDto(postRepository.save(this.postConverter.dtoToEntity(newPostDTO)));
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
+            throw new PostException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -90,7 +89,7 @@ public class PostService {
         if (post.isPresent()) {
             this.postRepository.deleteById(postId);
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
+            throw new PostException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -99,7 +98,7 @@ public class PostService {
         if (IterableUtils.size(posts) > 0) {
             this.postRepository.deleteAll();
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.POST_NO_POSTS_IN_DATABASE.getErrorMessage());
+            throw new PostException(ErrorMessagesEnum.POST_NO_POSTS_IN_DATABASE.getErrorMessage());
         }
     }
 
@@ -109,7 +108,7 @@ public class PostService {
             List<PostDTO> postDTOS = this.postConverter.entityToDto(IterableUtils.toList(posts));
             postDTOS.forEach(postDTO -> this.deletePostById(postDTO.getIdPost()));
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
+            throw new PostException(ErrorMessagesEnum.POST_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -119,7 +118,7 @@ public class PostService {
         if (IterableUtils.size(posts) > 0) {
             return this.postConverter.entityToDto(IterableUtils.toList(posts));
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.POST_NO_POST_YET.getErrorMessage());
+            throw new PostException(ErrorMessagesEnum.POST_NO_POST_YET.getErrorMessage());
         }
     }
 
@@ -134,7 +133,7 @@ public class PostService {
             });
             return postsToReturn;
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.POST_NO_POST_YET.getErrorMessage());
+            throw new PostException(ErrorMessagesEnum.POST_NO_POST_YET.getErrorMessage());
         }
     }
 }

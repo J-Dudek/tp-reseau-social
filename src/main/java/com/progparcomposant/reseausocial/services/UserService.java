@@ -3,6 +3,7 @@ package com.progparcomposant.reseausocial.services;
 import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.UserDTO;
 import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
+import com.progparcomposant.reseausocial.exceptions.UserException;
 import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
@@ -28,7 +29,7 @@ public class UserService {
         if (IterableUtils.size(users) > 0) {
             return this.userConverter.entityToDto(IterableUtils.toList(users));
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.USER_NO_USERS_IN_DATABASE.getErrorMessage());
+            throw new UserException(ErrorMessagesEnum.USER_NO_USERS_IN_DATABASE.getErrorMessage());
         }
     }
 
@@ -37,7 +38,7 @@ public class UserService {
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
+            throw new UserException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -46,7 +47,7 @@ public class UserService {
         if (IterableUtils.size(users) > 0) {
             return this.userConverter.entityToDto(IterableUtils.toList(users));
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
+            throw new UserException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -55,7 +56,7 @@ public class UserService {
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.USER_NO_USER_WITH_THAT_NAME.getErrorMessage());
+            throw new UserException(ErrorMessagesEnum.USER_NO_USER_WITH_THAT_NAME.getErrorMessage());
         }
     }
 
@@ -64,7 +65,7 @@ public class UserService {
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.USER_NO_USER_WITH_THAT_EMAIL.getErrorMessage());
+            throw new UserException(ErrorMessagesEnum.USER_NO_USER_WITH_THAT_EMAIL.getErrorMessage());
         }
     }
 
@@ -73,7 +74,7 @@ public class UserService {
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.USER_NO_USER_WITH_THAT_PHONENUMBER.getErrorMessage());
+            throw new UserException(ErrorMessagesEnum.USER_NO_USER_WITH_THAT_PHONENUMBER.getErrorMessage());
         }
     }
 
@@ -82,7 +83,7 @@ public class UserService {
             this.findUserByUserId(newUserDto.getIdUser());
             return userConverter.entityToDto(userRepository.save(this.userConverter.dtoToEntity(newUserDto)));
         } catch (SocialNetworkException ex) {
-            throw new SocialNetworkException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
+            throw new UserException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -95,7 +96,7 @@ public class UserService {
         if (user.isPresent()) {
             this.userRepository.deleteById(userId);
         } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
+            throw new UserException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 
