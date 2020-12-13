@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -40,9 +41,15 @@ public class PostService {
     }
 
     public List<PostDTO> findPublicPostsByUserId(Long userId) {
-        Iterable<Post> posts = this.postRepository.findPostByUserIdAndPublic(userId, true);
+        Iterable<Post> posts = this.postRepository.findAllByUserId(userId);
         if (IterableUtils.size(posts) > 0) {
-            return this.postConverter.entityToDto(IterableUtils.toList(posts));
+            List<PostDTO> postsToReturn = new ArrayList<>();
+            posts.forEach(post -> {
+                if (post.isPublic()) {
+                    postsToReturn.add(this.postConverter.entityToDto(post));
+                }
+            });
+            return postsToReturn;
         } else {
             throw new SocialNetworkException(ErrorMessagesEnum.POST_NO_POST_YET.getErrorMessage());
         }
