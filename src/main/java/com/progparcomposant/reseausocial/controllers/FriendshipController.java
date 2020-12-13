@@ -1,15 +1,17 @@
 package com.progparcomposant.reseausocial.controllers;
 
-import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
-import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.progparcomposant.reseausocial.converters.FriendshipConverter;
 import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.FriendshipDTO;
 import com.progparcomposant.reseausocial.dto.UserDTO;
+import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
+import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.model.Friendship;
 import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.FriendshipRepository;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
+import com.progparcomposant.reseausocial.views.UserViews;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +36,7 @@ public class FriendshipController {
     }
 
     @GetMapping("/all")
+    @JsonView(UserViews.Friends.class)
     public List<FriendshipDTO> findAllFriendships() {
         Iterable<Friendship> friendships = this.friendshipRepository.findAll();
         if (IterableUtils.size(friendships) > 0) {
@@ -44,6 +47,7 @@ public class FriendshipController {
     }
 
     @GetMapping(path = "/{userId}")
+    @JsonView(UserViews.Friends.class)
     public List<UserDTO> findFriendsByUserId(@PathVariable("userId") Long userId) {
         Iterable<Friendship> friendships = this.friendshipRepository.findFriendshipsByFirstUserIdOrSecondUserId(userId, userId);
         if (IterableUtils.size(friendships) > 0) {
@@ -56,6 +60,7 @@ public class FriendshipController {
     }
 
     @GetMapping(path = "/{firstUserId}/{secondUserId}")
+    @JsonView(UserViews.Friends.class)
     public UserDTO findFriendByFriendId(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) {
         Optional<Friendship> friendship = this.friendshipRepository.findByFirstUserIdAndSecondUserId(firstUserId, secondUserId);
         if (friendship.isPresent()) {
