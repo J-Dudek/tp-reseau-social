@@ -1,102 +1,47 @@
 package com.progparcomposant.reseausocial.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.progparcomposant.reseausocial.converters.FriendshipConverter;
-import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.FriendshipDTO;
 import com.progparcomposant.reseausocial.dto.UserDTO;
-import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
-import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
-import com.progparcomposant.reseausocial.model.Friendship;
-import com.progparcomposant.reseausocial.model.User;
-import com.progparcomposant.reseausocial.repositories.FriendshipRepository;
-import com.progparcomposant.reseausocial.repositories.UserRepository;
+import com.progparcomposant.reseausocial.services.FriendshipService;
 import com.progparcomposant.reseausocial.views.UserViews;
-import org.apache.commons.collections4.IterableUtils;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping(path = "/friends")
 public class FriendshipController {
 
-    private final FriendshipRepository friendshipRepository;
-    private final FriendshipConverter friendshipConverter;
-    private final UserRepository userRepository;
-    private final UserConverter userConverter;
-
-    public FriendshipController(FriendshipRepository friendshipRepository, FriendshipConverter friendshipConverter, UserRepository userRepository, UserConverter userConverter) {
-        this.friendshipRepository = friendshipRepository;
-        this.friendshipConverter = friendshipConverter;
-        this.userRepository = userRepository;
-        this.userConverter = userConverter;
-    }
+    private final FriendshipService friendshipService;
 
     @GetMapping("/all")
-    @JsonView(UserViews.Friends.class)
+    // @JsonView(UserViews.Friends.class)
     public List<FriendshipDTO> findAllFriendships() {
-        Iterable<Friendship> friendships = this.friendshipRepository.findAll();
-        if (IterableUtils.size(friendships) > 0) {
-            return this.friendshipConverter.entityToDto(IterableUtils.toList(friendships));
-        } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.FRIENDSHIP_NO_FRIENDSHIPS_IN_DATABASE.getErrorMessage());
-        }
+        return this.friendshipService.findAllFriendships();
     }
 
     @GetMapping(path = "/{userId}")
     @JsonView(UserViews.Friends.class)
     public List<UserDTO> findFriendsByUserId(@PathVariable("userId") Long userId) {
-        Iterable<Friendship> friendships = this.friendshipRepository.findFriendshipsByFirstUserIdOrSecondUserId(userId, userId);
-        if (IterableUtils.size(friendships) > 0) {
-            List<Long> friendsIds = new ArrayList<>();
-            friendships.forEach(friendship -> friendsIds.add(friendship.getSecondUserId()));
-            return this.userConverter.entityToDto(this.userRepository.findByIdIn(friendsIds));
-        } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
-        }
+        return this.friendshipService.findFriendsByUserId(userId);
     }
 
     @GetMapping(path = "/{firstUserId}/{secondUserId}")
     @JsonView(UserViews.Friends.class)
     public UserDTO findFriendByFriendId(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) {
-        Optional<Friendship> friendship = this.friendshipRepository.findByFirstUserIdAndSecondUserId(firstUserId, secondUserId);
-        if (friendship.isPresent()) {
-            FriendshipDTO friendshipDTO = this.friendshipConverter.entityToDto(friendship.get());
-            Long friendId = friendshipDTO.getFirstUserId().equals(secondUserId) ? friendshipDTO.getSecondUserId() : friendshipDTO.getFirstUserId();
-            Optional<User> user = this.userRepository.findById(friendId);
-            if (user.isPresent()) {
-                return this.userConverter.entityToDto(user.get());
-            } else {
-                throw new SocialNetworkException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
-            }
-        } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.FRIENDSHIP_NOT_FOUND.getErrorMessage());
-        }
+        return this.friendshipService.findFriendByFriendId(firstUserId, secondUserId);
     }
 
     @DeleteMapping(path = "/{firstUserId}/delete/{secondUserId}")
     public void deleteFriendByFriendId(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) {
-        Optional<Friendship> friendship = this.friendshipRepository.findByFirstUserIdAndSecondUserId(firstUserId, secondUserId);
-        if (friendship.isEmpty()) {
-            friendship = this.friendshipRepository.findByFirstUserIdAndSecondUserId(secondUserId, firstUserId);
-            if (friendship.isEmpty()) {
-                throw new SocialNetworkException(ErrorMessagesEnum.FRIENDSHIP_NOT_FOUND.getErrorMessage());
-            }
-        }
-        FriendshipDTO friendshipDTO = this.friendshipConverter.entityToDto(friendship.get());
-        this.friendshipRepository.deleteByFirstUserIdAndSecondUserId(friendshipDTO.getFirstUserId(), friendshipDTO.getSecondUserId());
+        this.friendshipService.deleteFriendByFriendId(firstUserId, secondUserId);
     }
 
     @DeleteMapping(path = "/{userId}/delete/all")
     public void deleteAllUserFriends(@PathVariable("userId") Long userId) {
-        Iterable<Friendship> friendships = this.friendshipRepository.findFriendshipsByFirstUserIdOrSecondUserId(userId, userId);
-        if (IterableUtils.size(friendships) > 0) {
-            this.friendshipRepository.deleteFriendshipsByFirstUserIdOrSecondUserId(userId, userId);
-        } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.FRIENDSHIP_USER_WITH_NO_FRIENDS.getErrorMessage());
-        }
+        this.friendshipService.deleteAllUserFriends(userId);
     }
 }

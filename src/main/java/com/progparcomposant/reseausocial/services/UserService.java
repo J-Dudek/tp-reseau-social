@@ -9,7 +9,6 @@ import com.progparcomposant.reseausocial.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
@@ -35,6 +34,15 @@ public class UserService {
         Optional<User> user = this.userRepository.findById(userId);
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
+        } else {
+            throw new SocialNetworkException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
+        }
+    }
+
+    public List<UserDTO> findUsersByIds(List<Long> userIds) {
+        Iterable<User> users = this.userRepository.findByIdIn(userIds);
+        if (IterableUtils.size(users) > 0) {
+            return this.userConverter.entityToDto(IterableUtils.toList(users));
         } else {
             throw new SocialNetworkException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
@@ -99,12 +107,10 @@ public class UserService {
     }
 
     public void deleteUsersByIds(List<Long> userIds) {
-        Iterable<User> users = this.userRepository.findByIdIn(userIds);
-        if (IterableUtils.size(users) > 0) {
-            for (Long id : userIds) {
-                this.userRepository.deleteById(id);
-            }
-        } else {
+        try {
+            this.findUsersByIds(userIds);
+            userIds.forEach(this.userRepository::deleteById);
+        } catch (SocialNetworkException ex) {
             throw new SocialNetworkException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
