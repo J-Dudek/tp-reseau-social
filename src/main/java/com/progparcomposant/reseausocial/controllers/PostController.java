@@ -26,7 +26,7 @@ public class PostController {
     private final FriendshipService friendshipService;
     private final PostService postService;
 
-    @GetMapping
+    @GetMapping(path = "/all")
     public List<PostDTO> findPosts() {
         Iterable<Post> posts = this.postRepository.findAll();
         if (IterableUtils.size(posts) > 0) {
@@ -39,7 +39,7 @@ public class PostController {
     @GetMapping(path = "/{readerId}/{postId}")
     public PostDTO findPostByPostId(@PathVariable("readerId") Long readerId, @PathVariable("postId") Long postId) {
         PostDTO postDTO = this.postService.findPostByPostId(postId);
-        if (this.friendshipService.isFriendshipExists(readerId, postDTO.getUserId()) || postDTO.isPublic()) {
+        if (this.friendshipService.isFriendshipExists(readerId, postDTO.getUserId()) || postDTO.isPublic() || postDTO.getUserId().equals(readerId)) {
             return postDTO;
         } else {
             throw new SocialNetworkException(ErrorMessagesEnum.POST_NOT_PUBLIC.getErrorMessage());
