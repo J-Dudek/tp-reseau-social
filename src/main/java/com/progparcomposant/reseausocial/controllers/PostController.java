@@ -1,9 +1,9 @@
 package com.progparcomposant.reseausocial.controllers;
 
-import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
-import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.converters.PostConverter;
 import com.progparcomposant.reseausocial.dto.PostDTO;
+import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
+import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.model.Post;
 import com.progparcomposant.reseausocial.repositories.PostRepository;
 import com.progparcomposant.reseausocial.services.FriendshipService;
