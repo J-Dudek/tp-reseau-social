@@ -56,7 +56,7 @@ public class PostController {
     }
 
     @GetMapping(path = "/{readerId}/list/{postIds}")
-    public List<PostDTO> findListPostsByPostIds(@PathVariable("readerId") Long readerId, @PathVariable("postIds") List<Long> postIds) {
+    public List<PostDTO> findPostsByPostIds(@PathVariable("readerId") Long readerId, @PathVariable("postIds") List<Long> postIds) {
         List<PostDTO> postsFromDatabase = this.postService.findPostsByIds(postIds);
         List<PostDTO> postsToReturn = new ArrayList<>();
         for (PostDTO postDTO : postsFromDatabase) {
