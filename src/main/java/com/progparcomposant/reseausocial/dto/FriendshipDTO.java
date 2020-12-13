@@ -40,4 +40,13 @@ public class FriendshipDTO {
     public void setFriendshipDate(Timestamp friendshipDate) {
         this.friendshipDate = friendshipDate;
     }
+
+    @Override
+    public String toString() {
+        return "FriendshipDTO{" +
+                "firstUserId=" + firstUserId +
+                ", secondUserId=" + secondUserId +
+                ", friendshipDate=" + friendshipDate +
+                '}';
+    }
 }

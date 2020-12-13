@@ -36,7 +36,7 @@ public class PostController {
         }
     }
 
-    @GetMapping(path = "/{readerId}/{postId}")
+    @GetMapping(path = "/{readerId}/read/{postId}")
     public PostDTO findPostByPostId(@PathVariable("readerId") Long readerId, @PathVariable("postId") Long postId) {
         PostDTO postDTO = this.postService.findPostByPostId(postId);
         if (this.friendshipService.isFriendshipExists(readerId, postDTO.getUserId()) || postDTO.isPublic() || postDTO.getUserId().equals(readerId)) {
@@ -46,7 +46,7 @@ public class PostController {
         }
     }
 
-    @GetMapping(path = "/{readerId}/{authorId}")
+    @GetMapping(path = "/{readerId}/read/{authorId}/all")
     public List<PostDTO> findPostsByAuthorId(@PathVariable("readerId") Long readerId, @PathVariable("authorId") Long authorId) {
         if (this.friendshipService.isFriendshipExists(readerId, authorId)) {
             return this.postService.findAllPostsByUserId(authorId);

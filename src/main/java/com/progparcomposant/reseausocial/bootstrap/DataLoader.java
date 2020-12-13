@@ -58,11 +58,11 @@ public class DataLoader implements CommandLineRunner {
     private void loadRelations() {
         List<FriendshipDTO> friendshipDTOList = new ArrayList<>();
         friendshipDTOList.add(new FriendshipDTO(1L, 2L, Timestamp.valueOf("2020-11-04 12:00:12")));
-        friendshipDTOList.add(new FriendshipDTO(3L, 1L, Timestamp.valueOf("2020-09-28 12:12:12")));
         friendshipDTOList.add(new FriendshipDTO(2L, 3L, Timestamp.valueOf("2020-12-08 10:10:12")));
+        friendshipDTOList.add(new FriendshipDTO(3L, 1L, Timestamp.valueOf("2020-09-28 12:12:12")));
         friendshipDTOList.add(new FriendshipDTO(4L, 2L, Timestamp.valueOf("2020-11-14 08:30:12")));
-        friendshipDTOList.add(new FriendshipDTO(5L, 1L, Timestamp.valueOf("2020-11-02 10:10:12")));
         friendshipDTOList.add(new FriendshipDTO(4L, 5L, Timestamp.valueOf("2020-10-30 06:30:12")));
+        friendshipDTOList.add(new FriendshipDTO(5L, 1L, Timestamp.valueOf("2020-11-02 10:10:12")));
         friendshipRepository.saveAll(friendshipConverter.dtoToEntity(friendshipDTOList));
     }
 

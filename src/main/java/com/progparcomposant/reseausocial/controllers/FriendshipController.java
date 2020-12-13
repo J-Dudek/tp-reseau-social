@@ -3,10 +3,13 @@ package com.progparcomposant.reseausocial.controllers;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.progparcomposant.reseausocial.dto.FriendshipDTO;
 import com.progparcomposant.reseausocial.dto.UserDTO;
+import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
 import com.progparcomposant.reseausocial.services.FriendshipService;
 import com.progparcomposant.reseausocial.views.UserViews;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -23,10 +26,14 @@ public class FriendshipController {
         return this.friendshipService.findAllFriendships();
     }
 
-    @GetMapping(path = "/{userId}")
+    @GetMapping(path = "/{userId}/all")
     @JsonView(UserViews.Friends.class)
     public List<UserDTO> findFriendsByUserId(@PathVariable("userId") Long userId) {
-        return this.friendshipService.findFriendsByUserId(userId);
+        try {
+            return this.friendshipService.findFriendsByUserId(userId);
+        } catch (SocialNetworkException exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, exception.getMessage());
+        }
     }
 
     @GetMapping(path = "/{firstUserId}/{secondUserId}")
@@ -37,7 +44,11 @@ public class FriendshipController {
 
     @DeleteMapping(path = "/{firstUserId}/delete/{secondUserId}")
     public void deleteFriendByFriendId(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) {
-        this.friendshipService.deleteFriendByFriendId(firstUserId, secondUserId);
+        try {
+            this.friendshipService.deleteFriendByFriendId(firstUserId, secondUserId);
+        } catch (SocialNetworkException exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, exception.getMessage());
+        }
     }
 
     @DeleteMapping(path = "/{userId}/delete/all")

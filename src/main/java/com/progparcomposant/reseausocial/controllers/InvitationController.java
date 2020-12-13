@@ -27,11 +27,6 @@ public class InvitationController {
         return this.invitationService.findAllInvitations();
     }
 
-    @PostMapping(path = "/create")
-    public InvitationDTO createInvitation(@RequestBody InvitationDTO newInvitationDTO) {
-        return this.invitationService.createInvitation(newInvitationDTO);
-    }
-
     @GetMapping(path = "/{firstUserId}/{secondUserId}")
     public InvitationDTO findInvitationByUserRequestedId(@PathVariable(name = "firstUserId") Long firstUserId, @PathVariable(name = "secondUserId") Long secondUserId) {
         return this.invitationService.findInvitationByUserRequestedId(firstUserId, secondUserId);
@@ -42,8 +37,13 @@ public class InvitationController {
         return this.invitationService.findAllInvitationsByUserId(userId);
     }
 
+    @PostMapping(path = "/create")
+    public InvitationDTO createInvitation(@RequestBody InvitationDTO newInvitationDTO) {
+        return this.invitationService.createInvitation(newInvitationDTO);
+    }
+
     @PostMapping(path = "/{firstUserId}/accept/{secondUserId}")
-    public void acceptInvitationById(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) {
+    public void acceptInvitationByUserIds(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) {
         this.invitationService.acceptInvitationByUserIds(firstUserId, secondUserId);
     }
 
@@ -53,7 +53,7 @@ public class InvitationController {
     }
 
     @DeleteMapping(path = "/{firstUserId}/delete/{secondUserId}")
-    public void deleteInvitationById(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) {
+    public void deleteInvitationByUserIds(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) {
         this.invitationService.deleteInvitationByUserIds(firstUserId, secondUserId);
     }
 

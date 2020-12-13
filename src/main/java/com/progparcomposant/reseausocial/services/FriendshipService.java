@@ -10,6 +10,7 @@ import com.progparcomposant.reseausocial.model.Friendship;
 import com.progparcomposant.reseausocial.repositories.FriendshipRepository;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import java.util.Optional;
 
 @AllArgsConstructor
 @Service
+@Slf4j
 public class FriendshipService {
 
     private final UserRepository userRepository;
@@ -121,6 +123,6 @@ public class FriendshipService {
     }
 
     private Long guessFriendId(FriendshipDTO friendshipDTO, Long firstUserId) {
-        return friendshipDTO.getFirstUserId().equals(firstUserId) ? friendshipDTO.getFirstUserId() : friendshipDTO.getSecondUserId();
+        return friendshipDTO.getFirstUserId().equals(firstUserId) ? friendshipDTO.getSecondUserId() : friendshipDTO.getFirstUserId();
     }
 }
