@@ -14,7 +14,9 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +36,18 @@ public class FriendshipService {
         } else {
             return this.friendshipRepository.findByFirstUserIdAndSecondUserId(secondUserId, firstUserId).isPresent();
         }
+    }
+
+    public FriendshipDTO getNewFriendship(Long firstUserId, Long secondUserId) {
+        return new FriendshipDTO(firstUserId, secondUserId, new Timestamp(Calendar.getInstance().getTimeInMillis()));
+    }
+    public FriendshipDTO saveFriendship(FriendshipDTO friendshipDTO) {
+        return this.friendshipConverter.entityToDto(this.friendshipRepository.save(friendshipConverter.dtoToEntity(friendshipDTO)));
+    }
+
+    public List<FriendshipDTO> saveAllFriendships(List<FriendshipDTO> friendshipDTOS) {
+        Iterable<Friendship> friendships = this.friendshipRepository.saveAll((Iterable<Friendship>) this.friendshipConverter.dtoToEntity(friendshipDTOS));
+        return this.friendshipConverter.entityToDto(IterableUtils.toList(friendships));
     }
 
     public List<FriendshipDTO> findAllFriendships() {

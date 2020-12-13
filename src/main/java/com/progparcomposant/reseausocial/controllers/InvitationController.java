@@ -2,23 +2,16 @@ package com.progparcomposant.reseausocial.controllers;
 
 import com.progparcomposant.reseausocial.converters.FriendshipConverter;
 import com.progparcomposant.reseausocial.converters.InvitationConverter;
-import com.progparcomposant.reseausocial.dto.FriendshipDTO;
 import com.progparcomposant.reseausocial.dto.InvitationDTO;
-import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
-import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
-import com.progparcomposant.reseausocial.model.Invitation;
 import com.progparcomposant.reseausocial.repositories.FriendshipRepository;
 import com.progparcomposant.reseausocial.repositories.InvitationRepository;
-import javassist.NotFoundException;
-import org.apache.commons.collections4.IterableUtils;
+import com.progparcomposant.reseausocial.services.InvitationService;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Optional;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping(path = "/invitations")
 public class InvitationController {
@@ -27,88 +20,45 @@ public class InvitationController {
     private final FriendshipRepository friendshipRepository;
     private final FriendshipConverter friendshipConverter;
     private final InvitationConverter invitationConverter;
-
-    public InvitationController(InvitationRepository invitationRepository, FriendshipRepository friendshipRepository, FriendshipConverter friendshipConverter, InvitationConverter invitationConverter) {
-        this.invitationRepository = invitationRepository;
-        this.friendshipRepository = friendshipRepository;
-        this.friendshipConverter = friendshipConverter;
-        this.invitationConverter = invitationConverter;
-    }
+    private final InvitationService invitationService;
 
     @GetMapping(path = "/all")
     public List<InvitationDTO> findAllInvitations() {
-        Iterable<Invitation> invitations = this.invitationRepository.findAll();
-        if (IterableUtils.size(invitations) > 0) {
-            return this.invitationConverter.entityToDto(IterableUtils.toList(invitations));
-        } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NO_INVITATIONS_IN_DATABASE.getErrorMessage());
-        }
+        return this.invitationService.findAllInvitations();
     }
 
     @PostMapping(path = "/create")
-    public InvitationDTO newInvitation(@RequestBody InvitationDTO newInvitationDTO) {
-        return invitationConverter.entityToDto(this.invitationRepository.save(invitationConverter.dtoToEntity(newInvitationDTO)));
+    public InvitationDTO createInvitation(@RequestBody InvitationDTO newInvitationDTO) {
+        return this.invitationService.createInvitation(newInvitationDTO);
     }
 
-    @GetMapping(path = "/{invitationId}")
-    public InvitationDTO findInvitationByInvitationId(@PathVariable(name = "invitationId") Long invitationId) {
-        Optional<Invitation> invitation = this.invitationRepository.findById(invitationId);
-        if (invitation.isPresent()) {
-            return this.invitationConverter.entityToDto(invitation.get());
-        } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
-        }
+    @GetMapping(path = "/{firstUserId}/{secondUserId}")
+    public InvitationDTO findInvitationByUserRequestedId(@PathVariable(name = "firstUserId") Long firstUserId, @PathVariable(name = "secondUserId") Long secondUserId) {
+        return this.invitationService.findInvitationByUserRequestedId(firstUserId, secondUserId);
     }
 
     @GetMapping(path = "/{userId}/all")
     public List<InvitationDTO> findAllInvitationsByUserId(@PathVariable(name = "userId") Long userId) {
-        Iterable<Invitation> invitations = this.invitationRepository.findAllByFirstUserId(userId);
-        if (IterableUtils.size(invitations) > 0) {
-            return this.invitationConverter.entityToDto(IterableUtils.toList(invitations));
-        } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NO_INVITATION_YET.getErrorMessage());
-        }
+        return this.invitationService.findAllInvitationsByUserId(userId);
     }
 
     @PostMapping(path = "/{firstUserId}/accept/{secondUserId}")
-    public void acceptInvitationById(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) throws NotFoundException {
-        Optional<Invitation> invitation = this.invitationRepository.findByFirstUserIdAndSecondUserId(firstUserId, secondUserId);
-        if (invitation.isPresent()) {
-            InvitationDTO invitationDTO = invitationConverter.entityToDto(invitation.get());
-            FriendshipDTO friendshipDTO = new FriendshipDTO(invitationDTO.getFirstUserId(), invitationDTO.getSecondUserId(), new Timestamp(Calendar.getInstance().getTimeInMillis()));
-            this.friendshipRepository.save(friendshipConverter.dtoToEntity(friendshipDTO));
-            this.invitationRepository.deleteByFirstUserIdAndSecondUserId(invitationDTO.getFirstUserId(), invitationDTO.getSecondUserId());
-        } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
-        }
+    public void acceptInvitationById(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) {
+        this.invitationService.acceptInvitationByUserIds(firstUserId, secondUserId);
     }
 
     @PostMapping(path = "/{userId}/accept/all")
     public void acceptAllInvitations(@PathVariable("userId") Long userId) {
-        Iterable<Invitation> invitations = this.invitationRepository.findAllByFirstUserId(userId);
-        if (IterableUtils.size(invitations) > 0) {
-            List<InvitationDTO> invitationDTOS = this.invitationConverter.entityToDto(IterableUtils.toList(invitations));
-            List<FriendshipDTO> newFriendshipDTOS = new ArrayList<>();
-            invitationDTOS.forEach(invitationDTO -> newFriendshipDTOS.add(new FriendshipDTO(invitationDTO.getFirstUserId(), invitationDTO.getSecondUserId(), new Timestamp(Calendar.getInstance().getTimeInMillis()))));
-            this.friendshipRepository.saveAll(this.friendshipConverter.dtoToEntity(newFriendshipDTOS));
-            this.invitationRepository.deleteAllByFirstUserId(userId);
-        } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
-        }
+        this.invitationService.acceptAllInvitations(userId);
     }
 
     @DeleteMapping(path = "/{firstUserId}/delete/{secondUserId}")
     public void deleteInvitationById(@PathVariable("firstUserId") Long firstUserId, @PathVariable("secondUserId") Long secondUserId) {
-        Optional<Invitation> invitation = this.invitationRepository.findByFirstUserIdAndSecondUserId(firstUserId, secondUserId);
-        if (invitation.isPresent()) {
-            this.invitationRepository.deleteByFirstUserIdAndSecondUserId(firstUserId, secondUserId);
-        } else {
-            throw new SocialNetworkException(ErrorMessagesEnum.INVITATION_NOT_FOUND.getErrorMessage());
-        }
+        this.invitationService.deleteInvitationByUserIds(firstUserId, secondUserId);
     }
 
     @DeleteMapping(path = "/{userId}/delete/all/")
     public void deleteAllInvitationsByUserId(@PathVariable("userId") Long userId) {
-        this.invitationRepository.deleteAllByFirstUserIdOrSecondUserId(userId, userId);
+        this.invitationService.deleteAllInvitationsByUserId(userId);
     }
 }

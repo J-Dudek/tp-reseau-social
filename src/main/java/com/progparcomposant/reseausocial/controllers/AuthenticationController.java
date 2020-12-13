@@ -8,6 +8,7 @@ import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
 import com.progparcomposant.reseausocial.views.UserViews;
+import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.sql.Timestamp;
 import java.util.Optional;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping(path = "/account")
 public class AuthenticationController {
@@ -24,12 +26,6 @@ public class AuthenticationController {
     private final UserConverter userConverter;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public AuthenticationController(UserConverter userConverter, UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userConverter = userConverter;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @PostMapping("/register")
     public void register(@RequestBody UserDTO userDTO) {

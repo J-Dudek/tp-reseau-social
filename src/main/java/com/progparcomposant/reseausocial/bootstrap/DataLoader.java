@@ -12,6 +12,7 @@ import com.progparcomposant.reseausocial.repositories.FriendshipRepository;
 import com.progparcomposant.reseausocial.repositories.InvitationRepository;
 import com.progparcomposant.reseausocial.repositories.PostRepository;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 @Component
 public class DataLoader implements CommandLineRunner {
 
@@ -83,19 +85,6 @@ public class DataLoader implements CommandLineRunner {
         postDTOList.add(new PostDTO("Post privé de l'utilisateur 4", Timestamp.valueOf("2020-12-01 12:00:00"), false, 4L));
         postDTOList.add(new PostDTO("Post privé de l'utilisateur 4", Timestamp.valueOf("2020-11-20 11:14:09"), false, 4L));
         postRepository.saveAll(postConverter.dtoToEntity(postDTOList));
-    }
-
-    public DataLoader(PasswordEncoder passwordEncoder, FriendshipRepository friendshipRepository, FriendshipConverter friendshipConverter, InvitationConverter invitationConverter, InvitationRepository invitationRepository,
-                      PostConverter postConverter, PostRepository postRepository, UserRepository userRepository, UserConverter userConverter) {
-        this.passwordEncoder = passwordEncoder;
-        this.friendshipRepository = friendshipRepository;
-        this.friendshipConverter = friendshipConverter;
-        this.invitationConverter = invitationConverter;
-        this.invitationRepository = invitationRepository;
-        this.postConverter = postConverter;
-        this.postRepository = postRepository;
-        this.userRepository = userRepository;
-        this.userConverter = userConverter;
     }
 
     private final FriendshipRepository friendshipRepository;
