@@ -1,7 +1,8 @@
 package com.progparcomposant.reseausocial.controllers;
 
 
-import com.progparcomposant.reseausocial.controllers.errors.ErrorMessagesEnum;
+import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
+import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.UserDTO;
 import com.progparcomposant.reseausocial.model.User;
@@ -32,7 +33,7 @@ public class UserController {
         if (IterableUtils.size(users) > 0) {
             return this.userConverter.entityToDto(IterableUtils.toList(users));
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.USER_NO_USERS_IN_DATABASE.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.USER_NO_USERS_IN_DATABASE.getErrorMessage());
         }
     }
 
@@ -42,7 +43,7 @@ public class UserController {
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -52,7 +53,7 @@ public class UserController {
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.USER_NO_USER_WITH_THAT_NAME.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.USER_NO_USER_WITH_THAT_NAME.getErrorMessage());
         }
     }
 
@@ -62,7 +63,7 @@ public class UserController {
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.USER_NO_USER_WITH_THAT_EMAIL.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.USER_NO_USER_WITH_THAT_EMAIL.getErrorMessage());
         }
     }
 
@@ -72,7 +73,7 @@ public class UserController {
         if (user.isPresent()) {
             return this.userConverter.entityToDto(user.get());
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.USER_NO_USER_WITH_THAT_PHONENUMBER.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.USER_NO_USER_WITH_THAT_PHONENUMBER.getErrorMessage());
         }
     }
 
@@ -87,9 +88,9 @@ public class UserController {
         if(user.isPresent()){
             return userConverter.entityToDto(userRepository.save(this.userConverter.dtoToEntity(newUserDto)));
         }else if(!userId.equals(newUserDto.getIdUser())){
-            throw new IllegalArgumentException(String.valueOf(newUserDto.getIdUser()));
+            throw new SocialNetworkException(String.valueOf(newUserDto.getIdUser()));
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -99,7 +100,7 @@ public class UserController {
         if (user.isPresent()) {
             this.userRepository.deleteById(userId);
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -109,7 +110,7 @@ public class UserController {
         if (IterableUtils.size(users) > 0) {
             this.userRepository.deleteAll();
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.USER_NO_USERS_IN_DATABASE.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.USER_NO_USERS_IN_DATABASE.getErrorMessage());
         }
     }
 
@@ -121,7 +122,7 @@ public class UserController {
                 this.userRepository.deleteById(id);
             }
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 }

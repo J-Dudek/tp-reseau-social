@@ -1,6 +1,7 @@
 package com.progparcomposant.reseausocial.controllers;
 
-import com.progparcomposant.reseausocial.controllers.errors.ErrorMessagesEnum;
+import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
+import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.converters.FriendshipConverter;
 import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.FriendshipDTO;
@@ -39,7 +40,7 @@ public class FriendshipController {
         if (IterableUtils.size(friendships) > 0) {
             return this.friendshipConverter.entityToDto(IterableUtils.toList(friendships));
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.FRIENDSHIP_NO_FRIENDSHIPS_IN_DATABASE.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.FRIENDSHIP_NO_FRIENDSHIPS_IN_DATABASE.getErrorMessage());
         }
     }
 
@@ -51,7 +52,7 @@ public class FriendshipController {
             friendships.forEach(friendship -> friendsIds.add(friendship.getSecondUserId()));
             return this.userConverter.entityToDto(this.userRepository.findByIdIn(friendsIds));
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -65,10 +66,10 @@ public class FriendshipController {
             if (user.isPresent()) {
                 return this.userConverter.entityToDto(user.get());
             } else {
-                throw new NoSuchElementException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
+                throw new SocialNetworkException(ErrorMessagesEnum.USER_NOT_FOUND.getErrorMessage());
             }
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.FRIENDSHIP_NOT_FOUND.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.FRIENDSHIP_NOT_FOUND.getErrorMessage());
         }
     }
 
@@ -78,7 +79,7 @@ public class FriendshipController {
         if (friendship.isEmpty()) {
             friendship = this.friendshipRepository.findByFirstUserIdAndSecondUserId(secondUserId, firstUserId);
             if (friendship.isEmpty()) {
-                throw new NoSuchElementException(ErrorMessagesEnum.FRIENDSHIP_NOT_FOUND.getErrorMessage());
+                throw new SocialNetworkException(ErrorMessagesEnum.FRIENDSHIP_NOT_FOUND.getErrorMessage());
             }
         }
         FriendshipDTO friendshipDTO = this.friendshipConverter.entityToDto(friendship.get());
@@ -91,7 +92,7 @@ public class FriendshipController {
         if (IterableUtils.size(friendships) > 0) {
             this.friendshipRepository.deleteFriendshipsByFirstUserIdOrSecondUserId(userId, userId);
         } else {
-            throw new NoSuchElementException(ErrorMessagesEnum.FRIENDSHIP_USER_WITH_NO_FRIENDS.getErrorMessage());
+            throw new SocialNetworkException(ErrorMessagesEnum.FRIENDSHIP_USER_WITH_NO_FRIENDS.getErrorMessage());
         }
     }
 }
