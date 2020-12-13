@@ -1,19 +1,32 @@
 package com.progparcomposant.reseausocial.dto;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.progparcomposant.reseausocial.views.UserViews;
+
 import java.sql.Date;
 import java.sql.Timestamp;
 
 public class UserDTO {
 
+    @JsonView(UserViews.Private.class)
     private Long idUser;
+    @JsonView(UserViews.Public.class)
     private String firstName;
+    @JsonView(UserViews.Public.class)
     private String lastName;
+    @JsonView(UserViews.Friends.class)
     private Date birthdate;
+    @JsonView(UserViews.Friends.class)
     private String email;
+    @JsonView(UserViews.Friends.class)
     private String phoneNumber;
+    @JsonView(UserViews.Friends.class)
     private String city;
+    @JsonView(UserViews.Friends.class)
     private Timestamp signInDate;
+    @JsonView(UserViews.Friends.class)
     private String username;
+    @JsonView(UserViews.Admin.class)
     private String password;
 
     public UserDTO() {
