@@ -1,18 +1,18 @@
 package com.progparcomposant.reseausocial.controllers;
 
 
-import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
-import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.UserDTO;
+import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
+import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
+import com.progparcomposant.reseausocial.views.UserViews;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -28,6 +28,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/all")
+    @JsonView(UserViews.Public.class)
     public List<UserDTO> findAllUsers() {
         Iterable<User> users = this.userRepository.findAll();
         if (IterableUtils.size(users) > 0) {
@@ -38,6 +39,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/{userId}")
+    @JsonView(UserViews.Public.class)
     public UserDTO findUserByUserId(@PathVariable("userId") Long userId) {
         Optional<User> user = this.userRepository.findById(userId);
         if (user.isPresent()) {
@@ -48,6 +50,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/{userName}/name")
+    @JsonView(UserViews.Public.class)
     public UserDTO findUserByName(@PathVariable("userName") String userName) {
         Optional<User> user = this.userRepository.findUsersByUsername(userName);
         if (user.isPresent()) {
@@ -58,6 +61,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/{email}/email")
+    @JsonView(UserViews.Public.class)
     public UserDTO findUserByEmail(@PathVariable("email") String email) {
         Optional<User> user = this.userRepository.findUserByEmail(email);
         if (user.isPresent()) {
@@ -68,6 +72,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/{phoneNumber}/phone")
+    @JsonView(UserViews.Public.class)
     public UserDTO findUserByPhoneNumber(@PathVariable("phoneNumber") String phoneNumber) {
         Optional<User> user = this.userRepository.findUserByPhoneNumber(phoneNumber);
         if (user.isPresent()) {
