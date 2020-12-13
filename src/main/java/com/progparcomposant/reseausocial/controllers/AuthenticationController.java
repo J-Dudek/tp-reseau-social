@@ -1,11 +1,13 @@
 package com.progparcomposant.reseausocial.controllers;
 
-import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
-import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.UserDTO;
+import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
+import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
+import com.progparcomposant.reseausocial.views.UserViews;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +43,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
+    @JsonView(UserViews.Private.class)
     public UserDTO login(@RequestBody UserDTO userDTO) {
         Optional<User> user = userRepository.findUserByUsername(userDTO.getUsername());
         if (user.isPresent() && passwordEncoder.matches(userDTO.getPassword(), user.get().getPassword())) {
