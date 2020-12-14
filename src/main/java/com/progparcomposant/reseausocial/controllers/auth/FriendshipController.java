@@ -1,4 +1,4 @@
-package com.progparcomposant.reseausocial.controllers;
+package com.progparcomposant.reseausocial.controllers.auth;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.progparcomposant.reseausocial.dto.FriendshipDTO;

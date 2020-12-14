@@ -1,4 +1,4 @@
-package com.progparcomposant.reseausocial.controllers;
+package com.progparcomposant.reseausocial.controllers.auth;
 
 import com.progparcomposant.reseausocial.dto.InvitationDTO;
 import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
