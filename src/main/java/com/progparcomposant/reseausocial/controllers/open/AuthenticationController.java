@@ -14,6 +14,7 @@ import com.progparcomposant.reseausocial.repositories.UserRepository;
 import com.progparcomposant.reseausocial.security.WebSecurity;
 import com.progparcomposant.reseausocial.views.UserViews;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,6 +51,7 @@ public class AuthenticationController {
     }
     
     @PostMapping("/register")
+    @ApiOperation(value = "For create a new user.")
     public void register(@RequestBody UserDTO userDTO) {
         if (userRepository.findUserByEmail(userDTO.getEmail()).isPresent()) {
             throw new SocialNetworkException(ErrorMessagesEnum.AUTH_EMAIL_ALREADY_ASSIGNED.getErrorMessage());
@@ -62,6 +64,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     @JsonView(UserViews.Private.class)
+    @ApiOperation(value = "Here you can verify access with login")
     public UserDTO login(@RequestBody UserDTO userDTO) {
         Optional<User> user = userRepository.findUserByUsername(userDTO.getUsername());
         if (user.isPresent() && passwordEncoder.matches(userDTO.getPassword(), user.get().getPassword())) {
@@ -72,6 +75,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/getToken")
+    @ApiOperation(value = "Just for swagger : return the necessary token for Auth Area.")
     public String getToken() throws UnirestException {
         return "Bearer "+Unirest.post(uri)
                 .header("Content-Type", "application/x-www-form-urlencoded")
