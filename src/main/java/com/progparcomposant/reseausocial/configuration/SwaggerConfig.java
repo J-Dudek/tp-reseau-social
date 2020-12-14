@@ -42,7 +42,7 @@ public class SwaggerConfig {
                 .tags(new Tag(INVITATION,"All about invitations"))
                 .tags(new Tag(POST,"All actions on posts are here"))
                 .tags(new Tag(USER,"User? you can do anything here."))
-                .securitySchemes(Collections.singletonList(new ApiKey("JSON Web Token (JWT", "Bearer", "header")))
+                .securitySchemes(Collections.singletonList(new ApiKey("JWT", "Authorization", "header")))
                 .securityContexts(Collections.singletonList(xAuthTokenSecurityContext()));
     }
 
