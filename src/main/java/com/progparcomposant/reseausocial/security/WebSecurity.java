@@ -1,5 +1,6 @@
 package com.progparcomposant.reseausocial.security;
 
+import org.hibernate.service.spi.InjectService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,10 +14,11 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     private static final String SCOPE_READ_MESSAGE = "SCOPE_read:messages";
 
+
     @Value("${auth0.audience}")
     private String audience;
 
-    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
+    @Value("${auth0.issuer}")
     private String issuer;
 
     @Bean
@@ -37,6 +39,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .mvcMatchers("/register").permitAll()
+                .mvcMatchers("/swagger-ui.html**").permitAll()
+                .mvcMatchers("/swagger-ui.html/**").permitAll()
                 .mvcMatchers("/users/**").hasAuthority(SCOPE_READ_MESSAGE)
                 .mvcMatchers("/posts/**").hasAuthority(SCOPE_READ_MESSAGE)
                 .mvcMatchers("/invitations/**").hasAuthority(SCOPE_READ_MESSAGE)
