@@ -1,7 +1,6 @@
 package com.progparcomposant.reseausocial.controllers.open;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.progparcomposant.reseausocial.configuration.SwaggerConfig;
@@ -11,11 +10,9 @@ import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
 import com.progparcomposant.reseausocial.exceptions.errors.ErrorMessagesEnum;
 import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
-import com.progparcomposant.reseausocial.security.WebSecurity;
 import com.progparcomposant.reseausocial.views.UserViews;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
