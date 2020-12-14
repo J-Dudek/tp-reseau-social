@@ -1,8 +1,10 @@
 package com.progparcomposant.reseausocial.controllers.auth;
 
+import com.progparcomposant.reseausocial.configuration.SwaggerConfig;
 import com.progparcomposant.reseausocial.dto.InvitationDTO;
 import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
 import com.progparcomposant.reseausocial.services.InvitationService;
+import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping(path = "/invitations")
+@Api(tags = { SwaggerConfig.INVITATION })
 public class InvitationController {
 
     private final InvitationService invitationService;

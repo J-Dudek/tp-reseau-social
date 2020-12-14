@@ -1,10 +1,12 @@
 package com.progparcomposant.reseausocial.controllers.auth;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.progparcomposant.reseausocial.configuration.SwaggerConfig;
 import com.progparcomposant.reseausocial.dto.UserDTO;
 import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
 import com.progparcomposant.reseausocial.services.UserService;
 import com.progparcomposant.reseausocial.views.UserViews;
+import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping(path = "/users")
+@Api(tags = { SwaggerConfig.USER })
 public class UserController {
 
     private final UserService userService;

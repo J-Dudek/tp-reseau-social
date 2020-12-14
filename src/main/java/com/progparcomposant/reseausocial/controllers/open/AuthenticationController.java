@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.progparcomposant.reseausocial.configuration.SwaggerConfig;
 import com.progparcomposant.reseausocial.converters.UserConverter;
 import com.progparcomposant.reseausocial.dto.UserDTO;
 import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
@@ -12,6 +13,7 @@ import com.progparcomposant.reseausocial.model.User;
 import com.progparcomposant.reseausocial.repositories.UserRepository;
 import com.progparcomposant.reseausocial.security.WebSecurity;
 import com.progparcomposant.reseausocial.views.UserViews;
+import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +27,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/account")
+@Api(tags = { SwaggerConfig.ACCESS })
 public class AuthenticationController {
 
     private final UserConverter userConverter;

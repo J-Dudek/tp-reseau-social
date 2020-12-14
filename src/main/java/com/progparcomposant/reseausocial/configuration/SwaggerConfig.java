@@ -18,7 +18,12 @@ import java.util.List;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
-    
+
+    public static final String FRIENDSHIP="Relationships Management.";
+    public static final String INVITATION="Invitations Management.";
+    public static final String POST="Posts Management.";
+    public static final String USER="Users Management";
+    public static final String ACCESS="Access Management";
 
     @Bean
     public Docket authTokenSecuredApi() {
@@ -29,7 +34,11 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.basePackage("com.progparcomposant.reseausocial.controllers.auth"))
                 .paths(PathSelectors.any())
                 .build()
-                .securitySchemes(Collections.singletonList(new ApiKey("JWT", "Authorization", "header")))
+                .tags(new Tag(FRIENDSHIP,""))
+                .tags(new Tag(INVITATION,""))
+                .tags(new Tag(POST,""))
+                .tags(new Tag(USER,""))
+                .securitySchemes(Collections.singletonList(new ApiKey("JSON Web Token (JWT", "Bearer", "header")))
                 .securityContexts(Collections.singletonList(xAuthTokenSecurityContext()));
     }
 
@@ -41,7 +50,8 @@ public class SwaggerConfig {
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.progparcomposant.reseausocial.controllers.open"))
                 .paths(PathSelectors.any())
-                .build();
+                .build()
+                .tags(new Tag(ACCESS,""));
     }
 
     private SecurityContext xBasicSecurityContext() {
@@ -61,10 +71,10 @@ public class SwaggerConfig {
     private ApiInfo apiInfoSecure() {
         return new ApiInfoBuilder().title("Reseau Social - Auth area")
                 .description("<h2>TP final - Programmation par composant.</h2></br><h3>Authenticated Area.</h3></br>" +
-                        "For all access you need a token :"+
+                        "For all access: Take a token !"+
                         "<ul>"+
                         "<li> Get token on the Open Area with  the getToken method and copy this.</li>"+
-                        "<li> Click on <span>Authorize</span> button and paste all</li>"+
+                        "<li> Click on Authorize button and paste all</li>"+
                         "</ul>"+
                         "You grant the access"+
                         "<a href=\"mailto:julien.dudek@lacatholille.fr\">Julien Dudek</a></br>" +

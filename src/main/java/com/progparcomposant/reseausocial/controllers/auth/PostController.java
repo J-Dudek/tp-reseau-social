@@ -1,8 +1,10 @@
 package com.progparcomposant.reseausocial.controllers.auth;
 
+import com.progparcomposant.reseausocial.configuration.SwaggerConfig;
 import com.progparcomposant.reseausocial.dto.PostDTO;
 import com.progparcomposant.reseausocial.exceptions.SocialNetworkException;
 import com.progparcomposant.reseausocial.services.PostService;
+import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping(path = "/posts")
+@Api(tags = { SwaggerConfig.POST })
 public class PostController {
 
     private final PostService postService;
