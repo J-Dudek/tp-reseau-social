@@ -70,7 +70,7 @@ public class AuthenticationController {
 
     @PostMapping("/getToken")
     public String getToken() throws UnirestException {
-        return Unirest.post(uri)
+        return "Bearer "+Unirest.post(uri)
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .field("client_id", id)
                 .field("client_secret", secret)
