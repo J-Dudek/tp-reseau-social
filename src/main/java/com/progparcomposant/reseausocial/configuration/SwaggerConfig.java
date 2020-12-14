@@ -70,13 +70,13 @@ public class SwaggerConfig {
     }
     private ApiInfo apiInfoSecure() {
         return new ApiInfoBuilder().title("Reseau Social - Auth area")
-                .description("<h2>TP final - Programmation par composant.</h2></br><h3>Authenticated Area.</h3></br>" +
+                .description("<h2>TP final - Programmation par composant.</h2>"+
+                        "<h3>Authenticated Area.</h3>" +
                         "For all access: Take a token !"+
                         "<ul>"+
                         "<li> Get token on the Open Area with  the getToken method and copy this.</li>"+
-                        "<li> Click on Authorize button and paste all</li>"+
-                        "</ul>"+
-                        "You grant the access"+
+                        "<li> Click on Authorize button and paste all</li></ul>"+
+                        "Access is granted to you.</br>"+
                         "<a href=\"mailto:julien.dudek@lacatholille.fr\">Julien Dudek</a></br>" +
                         "<a href=\"mailto:pierre.darcas@lacatholille.fr\">Pierre Darcas</a></br>" +
                         "<a href=\"mailto:morgan.lombard@mozilla.org\">Morgan Lombard</a></br>")
