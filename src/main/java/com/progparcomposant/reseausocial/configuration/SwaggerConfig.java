@@ -53,13 +53,6 @@ public class SwaggerConfig {
                 .tags(new Tag(ACCESS,""));
     }
 
-    private SecurityContext xBasicSecurityContext() {
-        return SecurityContext.builder()
-                .securityReferences(Collections.singletonList(
-                        new SecurityReference("xBasic",
-                                new AuthorizationScope[0])))
-                .build();
-    }
 
     private SecurityContext xAuthTokenSecurityContext() {
         AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
