@@ -36,7 +36,7 @@
 - **User Name:** admin
 - **Password:** admin
 
-### Insomnia
+### Insomnia (dossier insomnia à la racine du projet)
 1. Récupérer le token avec la requête : Get token - used before any call except login and register
 2. Utilisez n'importe quelle requête présente dans le fichier
 ### Swagger
