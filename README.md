@@ -28,13 +28,13 @@
 
 ## Utilisation
 ### Affichage de la console h2
-url : http://localhost:8088/h2-console/
-Saved Settings : Generic H2 (Embedded)
-Setting name : Generic H2 (Embedded)
-Driver Class : org.h2.Driver
-JDBC URL: jdbc:h2:mem:testdb
-User Name: admin
-Password: admin
+- **url:** http://localhost:8088/h2-console/
+- **Saved Settings:** Generic H2 (Embedded)
+- **Setting name:** Generic H2 (Embedded)
+- **Driver Class:** org.h2.Driver
+- **JDBC URL:** jdbc:h2:mem:testdb
+- **User Name:** admin
+- **Password:** admin
 
 ### Insomnia
 1. Récupérer le token avec la requête : Get token - used before any call except login and register
