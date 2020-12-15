@@ -52,6 +52,10 @@ Après avoir lancé l'application via `mvn spring-boot:run` vous rendre sur http
 
 ![](https://github.com/digeridooLeSage/stockage/blob/main/demo%20projet%20social/demo%20authenth%20full.gif)
 
-## Architecture (Appli et BDD)
+## Architecture
 
+### Diagramme Entité Reliation de la base de données
+[![](https://mermaid.ink/img/eyJjb2RlIjoiZXJEaWFncmFtXG4gICAgICAgICAgVVNFUiB8fC0tb3sgUE9TVCA6IFdSSVRFXG4gICAgICAgICAgVVNFUiB9by0tb3sgVVNFUiA6IEZSSUVORFNISVBcbiAgICAgICAgICBVU0VSIH1vLS1veyBVU0VSIDogSU5WSVRFXG4gICAgICAgICAgICAiLCJtZXJtYWlkIjp7fSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZXJEaWFncmFtXG4gICAgICAgICAgVVNFUiB8fC0tb3sgUE9TVCA6IFdSSVRFXG4gICAgICAgICAgVVNFUiB9by0tb3sgVVNFUiA6IEZSSUVORFNISVBcbiAgICAgICAgICBVU0VSIH1vLS1veyBVU0VSIDogSU5WSVRFXG4gICAgICAgICAgICAiLCJtZXJtYWlkIjp7fSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)
 
+### Diagramme de l'architecture de l'API
+![](https://github.com/J-Dudek/tp-reseau-social/blob/main/documentation/api_architecture.png)
