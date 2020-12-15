@@ -24,9 +24,9 @@
 | Authentification |             |On peut créer un compte sans etre authentifié, mais le reste des actions doivent être réservées aux utilisateurs authentifiés          |
 
 
-## Instalation 
+## Installation 
 
-1. Cloner le repo github : https://github.com/J-Dudek/tp-reseau-social
+1. Cloner le repo github : `git clone https://github.com/J-Dudek/tp-reseau-social.git`
 2. L'ouvrir comme un nouveau projet maven dans intelliJ
 3. Ouvrir le fichier insomnia tp-reseau-social-insomnia.json dans insomnia
 
@@ -34,7 +34,7 @@
 
 ### Affichage de la console h2
 
-url : http://localhost:8088/h2-console/login.jsp?jsessionid=34920503f2033de8da3b756a315a3585
+url : http://localhost:8088/h2-console/
 Saved Settings : Generic H2 (Embedded)
 Setting name : Generic H2 (Embedded)
 Driver Class : org.h2.Driver
@@ -46,9 +46,12 @@ Password: admin
 
 1. Récupérer le token avec la requête : Get token - used before any call except login and register
 2. Utilisez n'importe quelle requête présente dans le fichier
+### Swagger
+Afin de pouvoir tester de façons plus interactive l'application nous avons décidé d'implémenter un swagger.
+Après avoir lancé l'application via `mvn spring-boot:run` vous rendre sur https://localhot:8088/swagger-ui.html vous aurez ainsi la possibilité de tester l'API.
+
+![](https://github.com/digeridooLeSage/stockage/blob/main/demo%20projet%20social/demo%20authenth%20full.gif)
 
 ## Architecture (Appli et BDD)
 
-Max
-![](https://github.com/digeridooLeSage/stockage/blob/main/demo%20projet%20social/demo%20authenth%20full.gif)
 
