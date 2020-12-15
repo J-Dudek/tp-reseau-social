@@ -38,6 +38,7 @@ public class FriendshipService {
     public FriendshipDTO getNewFriendship(Long firstUserId, Long secondUserId) {
         return new FriendshipDTO(firstUserId, secondUserId, new Timestamp(Calendar.getInstance().getTimeInMillis()));
     }
+
     public FriendshipDTO saveFriendship(FriendshipDTO friendshipDTO) {
         return this.friendshipConverter.entityToDto(this.friendshipRepository.save(friendshipConverter.dtoToEntity(friendshipDTO)));
     }

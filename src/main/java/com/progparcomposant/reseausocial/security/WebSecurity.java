@@ -40,6 +40,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/register").permitAll()
                 .mvcMatchers("/swagger-ui.html**").permitAll()
                 .mvcMatchers("/swagger-ui.html/**").permitAll()
+                .mvcMatchers("/h2-console/**").permitAll()
                 .mvcMatchers("/users/**").hasAuthority(SCOPE_READ_MESSAGE)
                 .mvcMatchers("/posts/**").hasAuthority(SCOPE_READ_MESSAGE)
                 .mvcMatchers("/invitations/**").hasAuthority(SCOPE_READ_MESSAGE)
@@ -47,5 +48,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .and().cors()
                 .and().oauth2ResourceServer().jwt()
         ;
+
+        // affichage de la console h2 dans un navigateur
+        http.headers().frameOptions().disable();
     }
 }
